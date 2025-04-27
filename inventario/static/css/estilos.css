@@ -1,0 +1,239 @@
+/* Variables principales */
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --secondary-color: #6b7280;
+    --danger-color: #ef4444;
+    --danger-hover: #dc2626;
+    --success-color: #10b981;
+    --success-hover: #059669;
+    --discount-color: #f59e0b;
+    --discount-hover: #d97706;
+    --light-bg: #f9fafb;
+    --border-color: #e5e7eb;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+}
+
+/* Reset básico */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f3f4f6;
+    margin: 0;
+    padding: 0;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+h1, h2, h3 {
+    color: var(--text-primary);
+}
+
+/* Botones */
+button, .btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.btn-primary { background-color: var(--primary-color); color: #fff; }
+.btn-primary:hover { background-color: var(--primary-hover); }
+
+.btn-secondary { background-color: var(--secondary-color); color: #fff; }
+.btn-secondary:hover { background-color: #4b5563; }
+
+.btn-danger { background-color: var(--danger-color); color: #fff; }
+.btn-danger:hover { background-color: var(--danger-hover); }
+
+.btn-success { background-color: var(--success-color); color: #fff; }
+.btn-success:hover { background-color: var(--success-hover); }
+
+.btn-warning { background-color: var(--discount-color); color: #212529; }
+.btn-warning:hover { background-color: var(--discount-hover); }
+
+/* Formularios */
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+label {
+    font-weight: 500;
+    margin-bottom: 5px;
+    display: block;
+    color: var(--text-secondary);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Tablas */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+}
+
+th, td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+
+th {
+    background-color: var(--light-bg);
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Modales */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    color: #aaa;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
+/* Componentes Especiales */
+.search-container, .search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-input {
+    flex: 1;
+}
+
+.product-search-results {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 0 0 6px 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: none;
+}
+
+.search-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-item:hover {
+    background-color: var(--light-bg);
+}
+
+/* Alertas */
+.alert-stock, .no-results, .success-message {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.alert-stock {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger-color);
+}
+
+.no-results {
+    background-color: var(--light-bg);
+    color: var(--text-secondary);
+}
+
+.success-message {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+
+/* Extras */
+.actions, .action-buttons, .button-group {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.discount-badge {
+    background-color: var(--discount-color);
+}
+
+.inactive-badge {
+    background-color: var(--secondary-color);
+}
+
+.active-badge {
+    background-color: var(--success-color);
+}

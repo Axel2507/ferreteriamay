@@ -24,8 +24,8 @@ class Lexer:
         
         # Tokens específicos
         "Precio": r"^\$?\d+\.\d{2}\b",
-        "ID": r"^[0-9]+\b",
-        "CODIGO": r"^[0-9_-]{1,50}\b",
+        "ID": r"^I[0-9]+\b",
+        "CODIGO": r"^C[0-9_-]{1,50}\b",
         "Nombre": r'^"[^"]+"',
         "Texto": r'^\'[^\']*\'',
         "Cantidad": r"^[0-9]+\b",
@@ -41,20 +41,20 @@ class Lexer:
     command_structures = {
         # Materiales
         "ADD_MAT": (
-            ["ADD", "MAT", "CODIGO", "Nombre", "Texto", "Precio", "Precio", "Cantidad", "Cantidad", "ID", "ID", "ID"],
-            'ADD MAT CODIGO "Nombre del Material" \'Descripción opcional\' $10.50 $15.75 100 10 1 2 3'
+            ["ADD", "MAT", "CODIGO", "Nombre", "Precio", "Precio", "Cantidad", "Cantidad", "ID", "ID", "ID"],
+            'ADD MAT CODIGO "Nombre del Material" $10.50 $15.75 100 10 1 2 3'
         ),
         "ACT_MAT": (
-            ["ADD", "MAT", "CODIGO", "Nombre", "Texto", "Precio", "Precio", "Cantidad", "Cantidad", "ID", "ID", "ID"],
-            'ACT MAT CODIGO "Nombre del Material" \'Descripción opcional\' $10.50 $15.75 100 10 1 2 3'
+            ["ADD", "MAT", "CODIGO", "Nombre", "Precio", "Precio", "Cantidad", "Cantidad", "ID", "ID", "ID"],
+            'ACT MAT CODIGO "Nombre del Material" $10.50 $15.75 100 10 1 2 3'
         ),
         "REM_MAT": (["REM", "MAT", "CODIGO"], 'REM MAT ABC123'),
         "GET_MAT": (["GET", "MAT", "CODIGO"], 'GET MAT ABC123'),
         "LIST_MAT": (["LIST", "MAT"], 'LIST MAT'),
         
         # Categorías
-        "ADD_CAT": (["ADD", "CAT", "Nombre", "Texto", "Boolean"], 'ADD CAT "Herramientas" \'Descripción\' true'),
-        "ACT_CAT": (["ACT", "CAT", "ID", "Nombre", "Texto", "Boolean"], 'ACT CAT 1 "Herramientas" \'Descripción\' true'),
+        "ADD_CAT": (["ADD", "CAT", "Nombre"], 'ADD CAT "Herramientas"'),
+        "ACT_CAT": (["ACT", "CAT", "ID", "Nombre", "Texto", "Boolean"], 'ACT CAT 1 "Herramientas"'),
         "REM_CAT": (["REM", "CAT", "ID"], 'REM CAT 1'),
         "GET_CAT": (["GET", "CAT", "ID"], 'GET CAT 1'),
         "LIST_CAT": (["LIST", "CAT"], 'LIST CAT'),

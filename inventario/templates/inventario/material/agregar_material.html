@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Material</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}"> <!-- Tu CSS externo -->
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Agregar Nuevo Material</h2>
+        </div>
+        
+        <form id="formMaterial" method="post">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Código de Barras:</label>
+                        <input type="text" class="form-control" id="codigo" name="codigo" placeholder="Escanea o ingresa manualmente" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Nombre Material:</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Cantidad en Stock:</label>
+                        <input type="number" class="form-control" id="stock" name="stock" min="0" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Stock Mínimo:</label>
+                        <input type="number" class="form-control" id="stock_minimo" name="stock_minimo" min="0" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Precio de Compra:</label>
+                        <input type="number" class="form-control" id="precio_compra" name="precio_compra" min="0" step="0.01" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Precio de Venta:</label>
+                        <input type="number" class="form-control" id="precio_venta" name="precio_venta" min="0" step="0.01" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Categoría:</label>
+                        <select class="form-select" id="categoria" name="categoria" required>
+                            <option value="">Seleccionar categoría</option>
+                            {% for categoria in categorias %}
+                                <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Proveedor:</label>
+                        <select class="form-select" id="proveedor" name="proveedor" required>
+                            <option value="">Seleccionar proveedor</option>
+                            {% for proveedor in proveedores %}
+                                <option value="{{ proveedor.id }}">{{ proveedor.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Unidad:</label>
+                        <select class="form-select" id="unidad" name="unidad" required>
+                            <option value="">Seleccionar unidad</option>
+                            {% for unidad in unidades %}
+                                <option value="{{ unidad.id }}">{{ unidad.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Fecha de Caducidad (opcional):</label>
+                        <input type="date" class="form-control" id="fecha_caducidad" name="fecha_caducidad">
+                    </div>
+                </div>
+                <div class="col-md-6" style="margin-top: 30px;">
+                    <div class="form-group">
+                        <button type="submit" class="btn" id="agregarMaterial">Agregar Material</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</body>
+</html>

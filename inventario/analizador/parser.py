@@ -85,14 +85,6 @@ class Parser:
         else:
             raise SyntaxError("Se esperaba un nombre para el material")
         
-        # Descripción (puede ser NULL)
-        if self.position < len(self.tokens):
-            _, descripcion = self.tokens[self.position]
-            result["data"]["descripcion"] = descripcion
-            self.position += 1
-        else:
-            result["data"]["descripcion"] = ""
-        
         # Precio compra
         if self.position < len(self.tokens):
             _, precio_compra = self.tokens[self.position]
@@ -128,7 +120,7 @@ class Parser:
         # Categoría ID
         if self.position < len(self.tokens):
             _, categoria_id = self.tokens[self.position]
-            result["data"]["categoria_id"] = int(categoria_id)
+            result["data"]["categoria_id"] = categoria_id
             self.position += 1
         else:
             raise SyntaxError("Se esperaba un ID de categoría")
@@ -136,7 +128,7 @@ class Parser:
         # Proveedor ID
         if self.position < len(self.tokens):
             _, proveedor_id = self.tokens[self.position]
-            result["data"]["proveedor_id"] = int(proveedor_id)
+            result["data"]["proveedor_id"] = proveedor_id
             self.position += 1
         else:
             raise SyntaxError("Se esperaba un ID de proveedor")
@@ -144,7 +136,7 @@ class Parser:
         # Unidad ID
         if self.position < len(self.tokens):
             _, unidad_id = self.tokens[self.position]
-            result["data"]["unidad_id"] = int(unidad_id)
+            result["data"]["unidad_id"] = unidad_id
             self.position += 1
         else:
             raise SyntaxError("Se esperaba un ID de unidad")
@@ -166,22 +158,6 @@ class Parser:
             self.position += 1
         else:
             raise SyntaxError("Se esperaba un nombre para la categoría")
-        
-        # Descripción (puede ser NULL)
-        if self.position < len(self.tokens):
-            _, descripcion = self.tokens[self.position]
-            result["data"]["descripcion"] = descripcion
-            self.position += 1
-        else:
-            result["data"]["descripcion"] = ""
-        
-        # Activa
-        if self.position < len(self.tokens):
-            _, activa = self.tokens[self.position]
-            result["data"]["activa"] = bool(activa)
-            self.position += 1
-        else:
-            result["data"]["activa"] = True  # Por defecto
         
         return result
     
