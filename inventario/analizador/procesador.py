@@ -1,8 +1,8 @@
-from lexer import Lexer, LexerError
-from parser import Parser, SyntaxError
-from semantic import SemanticAnalyzer, SemanticError
+from .lexer import Lexer, LexerError
+from .parser import Parser, SyntaxError
+from .semantic import SemanticAnalyzer, SemanticError
 from django.db import transaction
-from inventario.models import Material, Categoria, Proveedor, Unidad, Venta, DetalleVenta, Devolucion, DetalleDevolucion, Descuento
+from inventario.models import Material, Categoria, Proveedor, Unidad, Venta, Devolucion, Descuento
 from django.db.models import F
 
 class CommandProcessor:
@@ -87,10 +87,11 @@ class CommandProcessor:
     
     def execute_add_cat(self, data):
         """Ejecuta la adición de una categoría"""
+        print("Datos recibidos para crear categoría:", data)
         # Crear nueva categoría
         categoria = Categoria(
             nombre=data.get("nombre"),
-            descripcion=data.get("descripcion", ""),
+            abreviacion=data.get("abreviacion"),
             activa=data.get("activa", True)
         )
         
@@ -102,6 +103,7 @@ class CommandProcessor:
             "object": {
                 "id": categoria.id,
                 "nombre": categoria.nombre,
+                "abreviacion": categoria.abreviacion,
                 "activa": categoria.activa
             }
         }

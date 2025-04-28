@@ -2,8 +2,8 @@ from django.db import models
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
-    descripcion = models.TextField(blank=True, null=True)
-    activa = models.BooleanField(default=True)  # Útil para categorías obsoletas
+    abreviacion = models.CharField(max_length=3, unique=True)
+    activa = models.BooleanField(default=True)
 
     class Meta:
         verbose_name = 'Categoría'
@@ -11,14 +11,14 @@ class Categoria(models.Model):
         ordering = ['nombre']
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} ({self.abreviacion})"
 
     def desactivar(self):
-        """Desactiva esta categoría sin eliminarla (optimización para datos históricos)"""
+        """Desactiva esta categoría sin eliminarla"""
         self.activa = False
         self.save()
 
     def activar(self):
-        """Restaura esta categoría"""
+        """Activa esta categoría"""
         self.activa = True
         self.save()

@@ -23,6 +23,7 @@ class Lexer:
         "DESC": r"^DESC\b",
         
         # Tokens específicos
+        "Abreviacion": r"^[A-Z]{3}\b",
         "Precio": r"^\$?\d+\.\d{2}\b",
         "ID": r"^I[0-9]+\b",
         "CODIGO": r"^C[0-9_-]{1,50}\b",
@@ -30,7 +31,6 @@ class Lexer:
         "Texto": r'^\'[^\']*\'',
         "Cantidad": r"^[0-9]+\b",
         "Porcentaje": r"^[0-9]+(\.[0-9]{1,2})?\%\b",
-        "Abreviacion": r"^[A-Z]{3}\b",
         "Fecha": r"^\d{2}/\d{2}/\d{4}\b",
         "Email": r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b",
         "Telefono": r"^\+?[0-9]{10,20}\b",
@@ -53,7 +53,7 @@ class Lexer:
         "LIST_MAT": (["LIST", "MAT"], 'LIST MAT'),
         
         # Categorías
-        "ADD_CAT": (["ADD", "CAT", "Nombre"], 'ADD CAT "Herramientas"'),
+        "ADD_CAT": (["ADD", "CAT", "Nombre", "Abreviacion"], 'ADD CAT "Herramientas" "HMT"'),
         "ACT_CAT": (["ACT", "CAT", "ID", "Nombre", "Texto", "Boolean"], 'ACT CAT 1 "Herramientas"'),
         "REM_CAT": (["REM", "CAT", "ID"], 'REM CAT 1'),
         "GET_CAT": (["GET", "CAT", "ID"], 'GET CAT 1'),

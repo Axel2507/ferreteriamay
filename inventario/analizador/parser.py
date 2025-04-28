@@ -158,6 +158,13 @@ class Parser:
             self.position += 1
         else:
             raise SyntaxError("Se esperaba un nombre para la categoría")
+        # Abreviacion
+        if self.position < len(self.tokens):
+            _, abreviacion = self.tokens[self.position]
+            result["data"]["abreviacion"] = abreviacion
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba una abreviacion para la categoría")
         
         return result
     

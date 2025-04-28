@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Categorías</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>Listado de Categorías</h2>
+
+        {% if categorias %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Abreviación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for categoria in categorias %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ categoria.nombre }}</td>
+                            <td>{{ categoria.abreviacion }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No hay categorías registradas todavía.</p>
+        {% endif %}
+
+        <div class="btn-container">
+            <a href="{% url 'agregar_categoria' %}" class="btn btn-primary">Agregar Nueva Categoría</a>
+        </div>
+    </div>
+</body>
+</html>

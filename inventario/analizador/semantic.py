@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from inventario.models import Material, Categoria, Proveedor, Unidad, Venta, DetalleVenta, Devolucion, DetalleDevolucion, Descuento
+from inventario.models import Material, Categoria, Proveedor, Unidad, Venta, Devolucion, Descuento
 
 class SemanticError(Exception):
     pass
@@ -75,7 +75,8 @@ class SemanticAnalyzer:
         # Verificar que el nombre no esté duplicado
         if Categoria.objects.filter(nombre=self.data.get("nombre")).exists():
             raise SemanticError(f"Ya existe una categoría con el nombre '{self.data.get('nombre')}'")
-        
+        if Categoria.objects.filter(abreviacion=self.data.get("abreviacion")).exists():
+            raise SemanticError(f"Ya existe una categoría con la abreviacion '{self.data.get('abreviacion')}'")
         # Todo está bien, el comando es semánticamente válido
         return True
     
