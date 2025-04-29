@@ -10,13 +10,12 @@ class Lexer:
         "ADD": r"^ADD\b",
         "ACT": r"^ACT\b",
         "REM": r"^REM\b",
-        "GET": r"^GET\b",
-        "LIST": r"^LIST\b",
-        
         # Entidades
         "MAT": r"^MAT\b",
         "VEN": r"^VEN\b",
+        "DVEN": r"^DVEN\b",
         "DEV": r"^DEV\b",
+        "DDEV": r"^DDEV\b",
         "CAT": r"^CAT\b",
         "PROV": r"^PROV\b",
         "UNI": r"^UNI\b",
@@ -26,14 +25,13 @@ class Lexer:
         "Abreviacion": r"^[A-Z]{3}\b",
         "Precio": r"^\$?\d+\.\d{2}\b",
         "ID": r"^I[0-9]+\b",
+        "Telefono": r"^\(\d{2,3}\)\s\d{4,5}-\d{4}",
+        "Email": r"^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]{0,63}[a-zA-Z0-9])?@(?:[a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,63}\b",
         "CODIGO": r"^C[0-9_-]{1,50}\b",
-        "Nombre": r'^"[^"]+"',
-        "Texto": r'^\'[^\']*\'',
+        "Nombre": r'^"[^"]*"',
         "Cantidad": r"^[0-9]+\b",
         "Porcentaje": r"^[0-9]+(\.[0-9]{1,2})?\%\b",
         "Fecha": r"^\d{2}/\d{2}/\d{4}\b",
-        "Email": r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b",
-        "Telefono": r"^\+?[0-9]{10,20}\b",
         "Boolean": r"^(true|false|True|False|1|0)\b",
         "NULL": r"^NULL\b"
     }
@@ -41,67 +39,63 @@ class Lexer:
     command_structures = {
         # Materiales
         "ADD_MAT": (
-            ["ADD", "MAT", "CODIGO", "Nombre", "Precio", "Precio", "Cantidad", "Cantidad", "ID", "ID", "ID"],
-            'ADD MAT CODIGO "Nombre del Material" $10.50 $15.75 100 10 1 2 3'
+            ["ADD", "MAT", "CODIGO", "Nombre", "Precio", "Precio", "Cantidad", "Cantidad", "ID", "ID", "ID", "ID", "Cantidad" , "Fecha"],
+            'ADD MAT CODIGO "Nombre del Material" $10.50 $15.75 100 10 I1 I2 I3 I4 12 01/01/2026'
         ),
         "ACT_MAT": (
-            ["ADD", "MAT", "CODIGO", "Nombre", "Precio", "Precio", "Cantidad", "Cantidad", "ID", "ID", "ID"],
-            'ACT MAT CODIGO "Nombre del Material" $10.50 $15.75 100 10 1 2 3'
+            ["ACT", "MAT", "CODIGO", "Nombre", "Precio", "Precio", "Cantidad", "Cantidad", "ID", "ID", "ID", "ID", "Cantidad" , "Fecha"],
+            'ACT MAT CODIGO "Nombre del Material" $10.50 $15.75 100 10 I1 I2 I3 I4 12 01/01/2026'
         ),
-        "REM_MAT": (["REM", "MAT", "CODIGO"], 'REM MAT ABC123'),
-        "GET_MAT": (["GET", "MAT", "CODIGO"], 'GET MAT ABC123'),
-        "LIST_MAT": (["LIST", "MAT"], 'LIST MAT'),
+        "REM_MAT": (["REM", "MAT", "CODIGO"], 'REM MAT C123001'),
         
         # Categorías
-        "ADD_CAT": (["ADD", "CAT", "Nombre", "Abreviacion"], 'ADD CAT "Herramientas" "HMT"'),
-        "ACT_CAT": (["ACT", "CAT", "ID", "Nombre", "Texto", "Boolean"], 'ACT CAT 1 "Herramientas"'),
-        "REM_CAT": (["REM", "CAT", "ID"], 'REM CAT 1'),
-        "GET_CAT": (["GET", "CAT", "ID"], 'GET CAT 1'),
-        "LIST_CAT": (["LIST", "CAT"], 'LIST CAT'),
+        "ADD_CAT": (["ADD", "CAT", "Nombre", "Abreviacion"], 'ADD CAT "Herramientas" "HTM"'),
+        "ACT_CAT": (["ACT", "CAT", "ID", "Nombre", "Abreviacion"], 'ACT CAT I1 "Herramientas" "HTM"'),
+        "REM_CAT": (["REM", "CAT", "ID"], 'REM CAT I1'),
         
         # Proveedores
         "ADD_PROV": (
-            ["ADD", "PROV", "Nombre", "Nombre", "Telefono", "Email", "Texto", "Boolean"],
-            'ADD PROV "Nombre Empresa" "Nombre Contacto" +1234567890 correo@ejemplo.com \'Dirección\' true'
+            ["ADD", "PROV", "Nombre", "Nombre", "Telefono", "Email", "Nombre"],
+            'ADD PROV "Nombre Empresa" "Nombre Contacto" +1234567890 correo@ejemplo.com \'Dirección\''
         ),
         "ACT_PROV": (
-            ["ACT", "PROV", "ID", "Nombre", "Nombre", "Telefono", "Email", "Texto", "Boolean"],
-            'ACT PROV 1 "Nombre Empresa" "Nombre Contacto" +1234567890 correo@ejemplo.com \'Dirección\' true'
+            ["ACT", "PROV", "ID", "Nombre", "Nombre", "Telefono", "Email", "Nombre"],
+            'ACT PROV I1 "Nombre Empresa" "Nombre Contacto" +1234567890 correo@ejemplo.com \'Dirección\''
         ),
-        "REM_PROV": (["REM", "PROV", "ID"], 'REM PROV 1'),
-        "GET_PROV": (["GET", "PROV", "ID"], 'GET PROV 1'),
-        "LIST_PROV": (["LIST", "PROV"], 'LIST PROV'),
+        "REM_PROV": (["REM", "PROV", "ID"], 'REM PROV I1'),
         
         # Unidades
         "ADD_UNI": (["ADD", "UNI", "Nombre", "Abreviacion"], 'ADD UNI "Kilogramos" KG'),
-        "ACT_UNI": (["ACT", "UNI", "ID", "Nombre", "Abreviacion"], 'ACT UNI 1 "Kilogramos" KG'),
-        "REM_UNI": (["REM", "UNI", "ID"], 'REM UNI 1'),
-        "GET_UNI": (["GET", "UNI", "ID"], 'GET UNI 1'),
-        "LIST_UNI": (["LIST", "UNI"], 'LIST UNI'),
+        "ACT_UNI": (["ACT", "UNI", "ID", "Nombre", "Abreviacion"], 'ACT UNI I1 "Kilogramos" KG'),
+        "REM_UNI": (["REM", "UNI", "ID"], 'REM UNI I1'),
         
         # Ventas
         "ADD_VEN": (["ADD", "VEN", "Precio"], 'ADD VEN $100.50'),
-        "GET_VEN": (["GET", "VEN", "ID"], 'GET VEN 1'),
-        "LIST_VEN": (["LIST", "VEN"], 'LIST VEN'),
+        "REM_VEN": (["REM", "VEN", "ID"], 'REM VEN I1'),
+
+        #Detalle venta
+        "ADD_DVEN": (
+        ["ADD", "DVEN", "VentaID", "CodigoMaterial", "Cantidad", "Subtotal"],
+        'ADD DVEN I5 C1234567890123 3 45.00'),
         
         # Devoluciones
-        "ADD_DEV": (["ADD", "DEV", "ID", "Texto", "Fecha"], 'ADD DEV 1 \'Motivo de devolución\' 25/04/2025'),
-        "ACT_DEV": (["ACT", "DEV", "ID", "Texto", "Fecha", "Texto"], 'ACT DEV 1 \'Nuevo motivo\' 25/04/2025 \'pendiente\''),
-        "GET_DEV": (["GET", "DEV", "ID"], 'GET DEV 1'),
-        "LIST_DEV": (["LIST", "DEV"], 'LIST DEV'),
+        "ADD_DEV": (["ADD", "DEV", "ID", "Nombre", "Fecha"], 'ADD DEV I1 \'Motivo de devolución\' 25/04/2025'),
+        "ACT_DEV": (["ACT", "DEV", "ID", "Nombre", "Fecha"], 'ACT DEV I1 \'Nuevo motivo\' 25/04/2025'),
         
+        #Detalle Devolucion
+        "ADD_DDEV": (
+        ["ADD", "DDEV", "DevolucionID", "DetalleVentaID", "CantidadDevuelta"],
+        'ADD DDEV I3 I7 1'),
         # Descuentos
         "ADD_DESC": (
             ["ADD", "DESC", "Nombre", "Porcentaje", "Fecha", "Fecha", "Boolean", "CODIGO"],
-            'ADD DESC "Descuento Temporada" 15% 01/05/2025 31/05/2025 true ABC123'
+            'ADD DESC "Descuento Temporada" 15% 01/05/2025 31/05/2025 true C123001'
         ),
         "ACT_DESC": (
             ["ACT", "DESC", "ID", "Nombre", "Porcentaje", "Fecha", "Fecha", "Boolean", "CODIGO"],
-            'ACT DESC 1 "Descuento Temporada" 15% 01/05/2025 31/05/2025 true ABC123'
+            'ACT DESC I1 "Descuento Temporada" 15% 01/05/2025 31/05/2025 true C123001'
         ),
-        "REM_DESC": (["REM", "DESC", "ID"], 'REM DESC 1'),
-        "GET_DESC": (["GET", "DESC", "ID"], 'GET DESC 1'),
-        "LIST_DESC": (["LIST", "DESC"], 'LIST DESC'),
+        "REM_DESC": (["REM", "DESC", "ID"], 'REM DESC I1'),
     }
 
     def __init__(self, input_str: str):
@@ -145,11 +139,14 @@ class Lexer:
                     remaining_input = remaining_input[match.end():].strip()
                     matched = True
                     break
-
+               
             if not matched:
                 invalid = remaining_input.split(" ")[0] if " " in remaining_input else remaining_input
                 raise LexerError(f"Token inválido encontrado: '{invalid}' en la entrada: '{self.original_input}'")
 
+            print("Tokens encontrados:")
+            for token in self.tokens:
+             print(token)
         return self.tokens
 
     def validate(self):

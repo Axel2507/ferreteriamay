@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Proveedor</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Registrar Proveedor</h1>
+
+        {% if error %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+        {% endif %}
+        <form id="supplierForm" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="companyName" class="required">Nombre de la empresa</label>
+                <input type="text" id="companyName" name="nombre_empresa" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="contactName" class="required">Nombre del contacto</label>
+                <input type="text" id="contactName" name="nombre_contacto" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone" class="required">Teléfono</label>
+                <input type="tel" id="phone" name="telefono" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="required">Correo electrónico</label>
+                <input type="email" id="email" name="correo" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="address" class="required">Dirección</label>
+                <textarea id="address" name="direccion" required></textarea>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn-save">Guardar</button>
+                <a href="{% url 'listar_proveedores' %}" class="btn-cancel">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

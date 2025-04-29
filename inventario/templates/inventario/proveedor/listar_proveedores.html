@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultar Proveedores</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Consultar Proveedores</h1>
+
+        <!-- Campo de búsqueda -->
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar proveedor por nombre de empresa...">
+            <button class="btn-search" onclick="searchSupplier()">Buscar</button>
+            <button class="btn-reset" onclick="resetSearch()">Mostrar Todos</button>
+        </div>
+
+        <table id="suppliersTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre de la empresa</th>
+                    <th>Nombre del contacto</th>
+                    <th>Teléfono</th>
+                    <th>Correo electrónico</th>
+                    <th>Dirección</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="suppliersBody">
+                {% for proveedor in proveedores %}
+                    <tr>
+                        <td>{{ proveedor.id }}</td>
+                        <td>{{ proveedor.nombre_empresa }}</td>
+                        <td>{{ proveedor.nombre_contacto }}</td>
+                        <td>{{ proveedor.telefono }}</td>
+                        <td>{{ proveedor.correo }}</td>
+                        <td>{{ proveedor.direccion }}</td>
+                        <td class="actions">
+                            <!-- Botón actualizar (después implementaremos actualización real) -->
+                            <a href="#" class="btn-update">Actualizar</a>
+
+                            <!-- Botón eliminar -->
+                            
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align: center;">No hay proveedores registrados.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function searchSupplier() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll("#suppliersTable tbody tr");
+
+            rows.forEach(row => {
+                const empresa = row.cells[1].innerText.toLowerCase();
+                row.style.display = empresa.includes(input) ? '' : 'none';
+            });
+        }
+
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            const rows = document.querySelectorAll("#suppliersTable tbody tr");
+            rows.forEach(row => {
+                row.style.display = '';
+            });
+        }
+    </script>
+</body>
+</html>

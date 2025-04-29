@@ -23,9 +23,6 @@ class SemanticAnalyzer:
     
     def analyze_add_mat(self):
         """Analiza semánticamente la adición de un material"""
-        # Verificar que el código no exista ya
-        if Material.objects.filter(codigo=self.data.get("codigo")).exists():
-            raise SemanticError(f"Ya existe un material con el código '{self.data.get('codigo')}'")
         
         # Verificar que el nombre no esté duplicado
         if Material.objects.filter(nombre=self.data.get("nombre")).exists():
@@ -46,13 +43,6 @@ class SemanticAnalyzer:
                 raise SemanticError(f"El proveedor con ID {self.data.get('proveedor_id')} está inactivo")
         except ObjectDoesNotExist:
             raise SemanticError(f"No existe un proveedor con ID {self.data.get('proveedor_id')}")
-        
-        # Verificar que la unidad existe
-        try:
-            Unidad.objects.get(id=self.data.get("unidad_id"))
-        except ObjectDoesNotExist:
-            raise SemanticError(f"No existe una unidad con ID {self.data.get('unidad_id')}")
-        
         # Verificar precios válidos
         if self.data.get("precio_compra") <= 0:
             raise SemanticError("El precio de compra debe ser mayor que cero")
@@ -66,6 +56,19 @@ class SemanticAnalyzer:
         # Verificar stock válido
         if self.data.get("stock_minimo") < 0:
             raise SemanticError("El stock mínimo no puede ser negativo")
+        
+        # Verificar unidad de compra
+        try:
+            Unidad.objects.get(id=self.data.get("unidad_compra_id"))
+        except ObjectDoesNotExist:
+            raise SemanticError(f"No existe una unidad de compra con ID {self.data.get('unidad_compra_id')}")
+
+        # Verificar unidad de venta
+        try:
+            Unidad.objects.get(id=self.data.get("unidad_venta_id"))
+        except ObjectDoesNotExist:
+            raise SemanticError(f"No existe una unidad de venta con ID {self.data.get('unidad_venta_id')}")
+
         
         # Todo está bien, el comando es semánticamente válido
         return True
@@ -167,6 +170,29 @@ class SemanticAnalyzer:
         
         # Todo está bien, el comando es semánticamente válido
         return True
+     
+    def analyze_add_prov(self):
+        """Analiza semánticamente la adición de una categoría"""
+        # Verificar que el nombre no esté duplicado
+        if Proveedor.objects.filter(correo=self.data.get("email")).exists():
+            raise SemanticError(f"Ya existe un correo con  '{self.data.get('email')}'")
+        if Proveedor.objects.filter(telefono=self.data.get("telefono")).exists():
+            raise SemanticError(f"Ya existe un telefono con el numero '{self.data.get('telefono')}'")
+        # Todo está bien, el comando es semánticamente válido
+        return True
     
+    def analyze_add_uni(self):
+        """Analiza semánticamente la adición de una unidad"""
+        # Verificar que el nombre no esté duplicado
+        if Unidad.objects.filter(nombre=self.data.get("nombre")).exists():
+            raise SemanticError(f"Ya existe una unidad con el nombre '{self.data.get('nombre')}'")
+        
+        # Verificar que la abreviación no esté duplicada
+        if Unidad.objects.filter(abreviacion=self.data.get("abreviacion")).exists():
+            raise SemanticError(f"Ya existe una unidad con la abreviación '{self.data.get('abreviacion')}'")
+        
+        # Todo bien
+        return True
+
     # Más métodos para cada combinación de comando y entidad
     # ...

@@ -22,4 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('material/', include('inventario.urls.material_urls')),
     path('categoria/', include('inventario.urls.categoria_urls')),
+    path('proveedor/', include('inventario.urls.proveedor_urls')),
+    path('unidad/', include('inventario.urls.unidad_urls')),
 ]

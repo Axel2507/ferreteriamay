@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar UnidadMedida</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Registrar Unidad de Medida</h1>
+
+        {% if error %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" required><br>
+        
+            <label for="abreviacion">Abreviación:</label>
+            <input type="text" name="abreviacion" required><br>
+        
+            <div class="button-group">
+                <button type="submit" class="btn-save">Guardar</button>
+                <a href="{% url 'listar_unidades' %}">Volver a la lista</a>
+            </div>
+        </form>
+    </div>
+    <div class="existing-unidades">
+        <div class="form-title">Unidades Existentes</div>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre de la Unidad</th>
+                        <th>Abreviación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if unidades %}
+                        {% for unidad in unidades %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ unidad.nombre }}</td>
+                                <td>{{ unidad.abreviacion }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3">No hay unidades registradas.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+

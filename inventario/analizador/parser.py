@@ -72,7 +72,7 @@ class Parser:
         # Código
         if self.position < len(self.tokens):
             _, codigo = self.tokens[self.position]
-            result["data"]["codigo"] = codigo
+            result["data"]["codigo"] = codigo[1:]
             self.position += 1
         else:
             raise SyntaxError("Se esperaba un código para el material")
@@ -120,7 +120,7 @@ class Parser:
         # Categoría ID
         if self.position < len(self.tokens):
             _, categoria_id = self.tokens[self.position]
-            result["data"]["categoria_id"] = categoria_id
+            result["data"]["categoria_id"] = int(categoria_id[1:])
             self.position += 1
         else:
             raise SyntaxError("Se esperaba un ID de categoría")
@@ -128,19 +128,45 @@ class Parser:
         # Proveedor ID
         if self.position < len(self.tokens):
             _, proveedor_id = self.tokens[self.position]
-            result["data"]["proveedor_id"] = proveedor_id
+            result["data"]["proveedor_id"] = int(proveedor_id[1:])
             self.position += 1
         else:
             raise SyntaxError("Se esperaba un ID de proveedor")
         
-        # Unidad ID
+        # Unidad Compra
         if self.position < len(self.tokens):
-            _, unidad_id = self.tokens[self.position]
-            result["data"]["unidad_id"] = unidad_id
+            _, unidad_compra_id = self.tokens[self.position]
+            result["data"]["unidad_compra_id"] = int(unidad_compra_id[1:])
             self.position += 1
         else:
-            raise SyntaxError("Se esperaba un ID de unidad")
+            raise SyntaxError("Se esperaba un ID de unidad de compra")
         
+        # Unidad venta
+        if self.position < len(self.tokens):
+            _, unidad_venta_id = self.tokens[self.position]
+            result["data"]["unidad_venta_id"] = int(unidad_venta_id[1:])
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba el ID de unidad de venta")
+
+        # Factor conversión
+        if self.position < len(self.tokens):
+            _, factor_conversion = self.tokens[self.position]
+            result["data"]["factor_conversion"] = float(factor_conversion)
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba el factor de conversión")
+        
+        if self.position < len(self.tokens):
+            token_type, fecha = self.tokens[self.position]
+            if token_type == "Fecha":
+                result["data"]["fecha_caducidad"] = fecha
+            elif token_type == "NULL":
+                result["data"]["fecha_caducidad"] = None
+            self.position += 1
+        else:
+            # Si no viene, dejamos None
+            result["data"]["fecha_caducidad"] = None
         return result
     
     def parse_add_cat(self):
@@ -186,5 +212,79 @@ class Parser:
         
         return result
     
+    def parse_add_prov(self):
+        """Analiza el comando ADD PROV"""
+        result = {
+            "command": "ADD",
+            "entity": "PROV",
+            "data": {}
+        }
+        
+        # Nombre_empresa
+        if self.position < len(self.tokens):
+            _, nombre = self.tokens[self.position]
+            result["data"]["nombre_empresa"] = nombre
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un nombre para la empresa")
+        # Nombre_contacto
+        if self.position < len(self.tokens):
+            _, nombre = self.tokens[self.position]
+            result["data"]["nombre_contacto"] = nombre
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un nombre para el contacto")
+         # Telefono
+        if self.position < len(self.tokens):
+            _, telefono = self.tokens[self.position]
+            result["data"]["telefono"] = telefono
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un numero de telefono para el contacto")
+         # Email
+        if self.position < len(self.tokens):
+            _, email = self.tokens[self.position]
+            result["data"]["email"] = email
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un correo para el contacto")
+        
+         # Direccion
+        if self.position < len(self.tokens):
+            _, nombre = self.tokens[self.position]
+            result["data"]["direccion"] = nombre
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba una direcion")
+
+        return result
+    
+
+    def parse_add_uni(self):
+        """Analiza el comando ADD UNI"""
+        result = {
+            "command": "ADD",
+            "entity": "UNI",
+            "data": {}
+        }
+        
+        # Nombre
+        if self.position < len(self.tokens):
+            _, nombre = self.tokens[self.position]
+            result["data"]["nombre"] = nombre
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un nombre para la unidad")
+
+        # Abreviacion
+        if self.position < len(self.tokens):
+            _, abreviacion = self.tokens[self.position]
+            result["data"]["abreviacion"] = abreviacion
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba una abreviación para la unidad")
+        
+        return result
+
     # Más métodos para cada combinación de comando y entidad
     # ...

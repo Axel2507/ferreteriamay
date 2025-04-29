@@ -12,7 +12,11 @@
         <div class="header">
             <h2>Agregar Nuevo Material</h2>
         </div>
-        
+        {% if error %}
+            <div class="alert alert-danger">
+                {{ error }}
+            </div>
+        {% endif %}
         <form id="formMaterial" method="post">
             {% csrf_token %}
             <div class="row">
@@ -79,7 +83,7 @@
                         <select class="form-select" id="proveedor" name="proveedor" required>
                             <option value="">Seleccionar proveedor</option>
                             {% for proveedor in proveedores %}
-                                <option value="{{ proveedor.id }}">{{ proveedor.nombre }}</option>
+                                <option value="{{ proveedor.id_proveedor }}">{{ proveedor.nombre_empresa }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -87,13 +91,30 @@
 
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="form-label">Unidad:</label>
-                        <select class="form-select" id="unidad" name="unidad" required>
+                        <label class="form-label">Unidad de Medida por Compra:</label>
+                        <select class="form-select" id="unidad_compra" name="unidad_compra" required>
                             <option value="">Seleccionar unidad</option>
                             {% for unidad in unidades %}
                                 <option value="{{ unidad.id }}">{{ unidad.nombre }}</option>
                             {% endfor %}
                         </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Unidad de Medida por Venta:</label>
+                        <select class="form-select" id="unidad_venta" name="unidad_venta" required>
+                            <option value="">Seleccionar unidad</option>
+                            {% for unidad in unidades %}
+                                <option value="{{ unidad.id }}">{{ unidad.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Factor de Conversión:</label>
+                        <input type="number" class="form-control" id="factorc" name="factor_conversion" min="1" step="0.01" required>
                     </div>
                 </div>
             </div>

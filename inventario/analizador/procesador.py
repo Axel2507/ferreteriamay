@@ -19,6 +19,14 @@ class CommandProcessor:
             # 2. Análisis sintáctico
             parser = Parser(tokens)
             parsed_data = parser.parse()
+           
+
+            print("Resultado del parser:", parsed_data)
+
+            # Aquí cuando tomas los valores:
+            data = parsed_data["data"]
+
+            print("Datos antes de convertir a int:", data)
             
             # 3. Análisis semántico
             semantic = SemanticAnalyzer(parsed_data)
@@ -26,7 +34,9 @@ class CommandProcessor:
             
             # 4. Ejecución del comando
             return self.execute_command(parsed_data)
-            
+        except Exception as e:
+         print("Excepción atrapada:", e)  # <<< AGREGA ESTE PRINT
+         raise e  # <-- Lanza otra vez para que Django te siga diciendo qué pasó    
         except LexerError as e:
             return {"success": False, "error": f"Error léxico: {str(e)}"}
         except SyntaxError as e:
@@ -35,7 +45,7 @@ class CommandProcessor:
             return {"success": False, "error": f"Error semántico: {str(e)}"}
         except Exception as e:
             return {"success": False, "error": f"Error inesperado: {str(e)}"}
-    
+        
     @transaction.atomic
     def execute_command(self, parsed_data):
         """Ejecuta el comando validado según su tipo y entidad"""
@@ -56,34 +66,56 @@ class CommandProcessor:
         # Obtener objetos relacionados
         categoria = Categoria.objects.get(id=data.get("categoria_id"))
         proveedor = Proveedor.objects.get(id_proveedor=data.get("proveedor_id"))
-        unidad = Unidad.objects.get(id=data.get("unidad_id"))
-        
+        unidad_compra = Unidad.objects.get(id=data.get("unidad_compra_id"))
+        unidad_venta = Unidad.objects.get(id=data.get("unidad_venta_id"))
         # Crear nuevo material
         material = Material(
             codigo=data.get("codigo"),
             nombre=data.get("nombre"),
-            descripcion=data.get("descripcion", ""),
             precio_compra=data.get("precio_compra"),
             precio_venta=data.get("precio_venta"),
             stock=data.get("stock", 0),
             stock_minimo=data.get("stock_minimo", 0),
-            categoria=categoria,
-            proveedor=proveedor,
-            unidad=unidad
+            categoria=Categoria.objects.get(id=data.get("categoria_id")),
+            proveedor=Proveedor.objects.get(id_proveedor=data.get("proveedor_id")),
+            unidad_compra=Unidad.objects.get(id=data.get("unidad_compra_id")),
+            unidad_venta=Unidad.objects.get(id=data.get("unidad_venta_id")),
+            factor_conversion=data.get("factor_conversion"),
+            fecha_caducidad=data.get("fecha_caducidad"),
+            activo=True
         )
-        
-        # Guardar y retornar éxito
         material.save()
         return {
-            "success": True, 
-            "message": f"Material '{data.get('nombre')}' creado correctamente con código '{data.get('codigo')}'",
+            "success": True,
+            "message": f"Material '{material.nombre}' creado correctamente",
             "object": {
                 "codigo": material.codigo,
                 "nombre": material.nombre,
+                "precio_compra": float(material.precio_compra),
                 "precio_venta": float(material.precio_venta),
-                "stock": material.stock
-            }
-        }
+                "stock": material.stock,
+                "stock_minimo": material.stock_minimo,
+                "categoria": {
+                    "id": material.categoria.id,
+                    "nombre": material.categoria.nombre
+                },
+                "proveedor": {
+                    "id": material.proveedor.id_proveedor,
+                    "nombre_empresa": material.proveedor.nombre_empresa
+                },
+                "unidad_compra": {
+                    "id": material.unidad_compra.id,
+                    "nombre": material.unidad_compra.nombre
+                },
+                "unidad_venta": {
+                    "id": material.unidad_venta.id,
+                    "nombre": material.unidad_venta.nombre
+                },
+                "factor_conversion": material.factor_conversion,
+                "activo": material.activo
+           }
+}
+
     
     def execute_add_cat(self, data):
         """Ejecuta la adición de una categoría"""
@@ -94,19 +126,33 @@ class CommandProcessor:
             abreviacion=data.get("abreviacion"),
             activa=data.get("activa", True)
         )
+
+    def execute_add_prov(self, data):
+        """Ejecuta la adición de un proveedor"""
+        print("Datos recibidos para crear proveedor:", data)
+        # Crear un proveedor
+        proveedor = Proveedor(
+            nombre_empresa=data.get("nombre_empresa"),
+            nombre_contacto=data.get("nombre_contacto"),
+            telefono=data.get("telefono"),
+            correo=data.get("email"),
+            direccion=data.get("direccion"),
+            activo=data.get("activo", True)
+        )
         
         # Guardar y retornar éxito
-        categoria.save()
         return {
-            "success": True, 
-            "message": f"Categoría '{data.get('nombre')}' creada correctamente con ID {categoria.id}",
+            "success": True,
+            "message": f"Proveedor '{proveedor.nombre_empresa}' creado correctamente",
             "object": {
-                "id": categoria.id,
-                "nombre": categoria.nombre,
-                "abreviacion": categoria.abreviacion,
-                "activa": categoria.activa
-            }
-        }
+                "nombre_empresa": proveedor.nombre_empresa,
+                "nombre_contacto": proveedor.nombre_contacto,
+                "telefono": proveedor.telefono,
+                "correo": proveedor.correo,
+                "direccion": proveedor.direccion,
+                "activo": proveedor.activo
+           }
+    }
     
     def execute_add_ven(self, data):
         """Ejecuta la adición de una venta"""
@@ -326,5 +372,43 @@ class CommandProcessor:
             "objects": result_list
         }
     
+    def execute_rem_prov(self, data):
+        proveedor = Proveedor.objects.get(id=data.get("id"))
+        proveedor.activo = False
+        proveedor.save()
+
+        return {
+            "success": True,
+            "message": f"Proveedor '{proveedor.nombre_empresa}' desactivado correctamente",
+            "object": {
+                "id": proveedor.id,
+                "nombre_empresa": proveedor.nombre_empresa,
+                "nombre_contacto": proveedor.nombre_contacto,
+                "telefono": proveedor.telefono,
+                "correo": proveedor.correo,
+                "direccion": proveedor.direccion,
+                "activo": proveedor.activo
+            }
+        }
+
+    def execute_add_uni(self, data):
+        """Ejecuta la adición de una unidad"""
+        unidad = Unidad(
+            nombre=data.get("nombre"),
+            abreviacion=data.get("abreviacion"),
+            activo=True  # Siempre activa al crearse
+        )
+        unidad.save()
+
+        return {
+            "success": True,
+            "message": f"Unidad '{unidad.nombre}' creada correctamente",
+            "object":{
+                "id":unidad.id,
+                "nombre": unidad.nombre,
+                "abreviacion": unidad.abreviacion,
+                "activo" : unidad.activo
+            }
+        }
     # Los demás métodos de ejecución para las diferentes combinaciones
     # ...

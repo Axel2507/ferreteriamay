@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar UnidadMedida</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    {% if unidades %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Abreviación</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+            {% for unidad in unidades %}
+            <tr>
+                <td>{{ unidad.nombre }}</td>
+                <td>{{ unidad.abreviacion }}</td>
+                <td>
+                 
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No hay unidades registradas.</p>
+    {% endif %}
+    
+    <a href="{% url 'agregar_unidad' %}">Agregar nueva unidad</a>
+</body>
+</html>
