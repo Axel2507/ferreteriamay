@@ -22,16 +22,16 @@ class Lexer:
         "DESC": r"^DESC\b",
         
         # Tokens específicos
+        "Fecha": r"^\d{4}[/-]\d{2}[/-]\d{2}\b",
         "Abreviacion": r"^[A-Z]{3}\b",
         "Precio": r"^\$?\d+\.\d{2}\b",
         "ID": r"^I[0-9]+\b",
-        "Telefono": r"^\(\d{2,3}\)\s\d{4,5}-\d{4}",
+        "Telefono": r"^\(\d{2,3}\)\d{3}-\d{3}-\d{4}\b",
         "Email": r"^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]{0,63}[a-zA-Z0-9])?@(?:[a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,63}\b",
         "CODIGO": r"^C[0-9_-]{1,50}\b",
         "Nombre": r'^"[^"]*"',
         "Cantidad": r"^[0-9]+\b",
         "Porcentaje": r"^[0-9]+(\.[0-9]{1,2})?\%\b",
-        "Fecha": r"^\d{2}/\d{2}/\d{4}\b",
         "Boolean": r"^(true|false|True|False|1|0)\b",
         "NULL": r"^NULL\b"
     }
@@ -40,11 +40,11 @@ class Lexer:
         # Materiales
         "ADD_MAT": (
             ["ADD", "MAT", "CODIGO", "Nombre", "Precio", "Precio", "Cantidad", "Cantidad", "ID", "ID", "ID", "ID", "Cantidad" , "Fecha"],
-            'ADD MAT CODIGO "Nombre del Material" $10.50 $15.75 100 10 I1 I2 I3 I4 12 01/01/2026'
+            'ADD MAT CODIGO "Nombre del Material" $10.50 $15.75 100 10 I1 I2 I3 I4 12 2026-01-01'
         ),
         "ACT_MAT": (
             ["ACT", "MAT", "CODIGO", "Nombre", "Precio", "Precio", "Cantidad", "Cantidad", "ID", "ID", "ID", "ID", "Cantidad" , "Fecha"],
-            'ACT MAT CODIGO "Nombre del Material" $10.50 $15.75 100 10 I1 I2 I3 I4 12 01/01/2026'
+            'ACT MAT CODIGO "Nombre del Material" $10.50 $15.75 100 10 I1 I2 I3 I4 12 2026-01-01'
         ),
         "REM_MAT": (["REM", "MAT", "CODIGO"], 'REM MAT C123001'),
         
@@ -75,7 +75,7 @@ class Lexer:
 
         #Detalle venta
         "ADD_DVEN": (
-        ["ADD", "DVEN", "VentaID", "CodigoMaterial", "Cantidad", "Subtotal"],
+        ["ADD", "DVEN", "ID", "CODIGO", "Cantidad", "Precio"],
         'ADD DVEN I5 C1234567890123 3 45.00'),
         
         # Devoluciones

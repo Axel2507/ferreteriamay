@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from inventario.models import Material, Categoria, Proveedor, Unidad, Venta, Devolucion, Descuento
-
+from inventario.models.venta import DetalleVenta
 class SemanticError(Exception):
     pass
 
@@ -91,7 +91,6 @@ class SemanticAnalyzer:
         
         # Se necesitaría detalle de venta para más validaciones
         # Aquí se puede verificar existencia de productos, stock disponible, etc.
-        
         # Todo está bien, el comando es semánticamente válido
         return True
     
@@ -193,6 +192,30 @@ class SemanticAnalyzer:
         
         # Todo bien
         return True
+    
+    def analyze_add_dven(self):
+        """
+        Valida que haya suficiente stock para la venta de un material
+        """
+        cantidad = self.data.get("cantidad")
+        codigo = self.data.get("codigo")
+        try:
+            material = Material.objects.get(codigo=codigo)
+        except Material.DoesNotExist:
+            raise SemanticError(f"El material con código '{codigo}' no existe")
 
+        if material.stock < cantidad:
+            raise SemanticError(
+                f"No hay suficiente stock para el material '{material.nombre}'.\n"
+                f"Stock disponible: {material.stock}, solicitado: {cantidad}"
+            )
+
+        return True
     # Más métodos para cada combinación de comando y entidad
     # ...
+    def validate_add_ven(self):
+        """Valida que el total de venta sea positivo"""
+        total = self.data.get("total")
+        if total <= 0:
+            raise SemanticError("El total de la venta debe ser mayor a cero")
+        return True

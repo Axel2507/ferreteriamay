@@ -27,7 +27,7 @@ class Parser:
             raise SyntaxError("Se esperaba una entidad después del comando")
         
         entity_token, entity_value = self.tokens[self.position]
-        if entity_token not in ["MAT", "CAT", "PROV", "UNI", "VEN", "DEV", "DESC"]:
+        if entity_token not in ["MAT", "CAT", "PROV", "UNI", "VEN", "DEV", "DESC", "DVEN"]:
             raise SyntaxError(f"Se esperaba una entidad válida, encontrado: {entity_value}")
         
         self.entity = entity_value
@@ -288,3 +288,42 @@ class Parser:
 
     # Más métodos para cada combinación de comando y entidad
     # ...
+        
+    def parse_add_dven(self):
+        """Analiza el comando ADD DVEN"""
+        result = {
+            "command": "ADD",
+            "entity": "DVEN",
+            "data": {}
+        }
+        if self.position < len(self.tokens):
+            _, id_venta = self.tokens[self.position]
+            result["data"]["id_venta"] = int(id_venta[1:])
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un id de venta")
+        # Código del material
+        if self.position < len(self.tokens):
+            _, codigo = self.tokens[self.position]
+            result["data"]["codigo_materia"] = codigo[1:]
+            self.position += 1
+        else:
+            raise SyntaxError("Falta el código del material")
+
+        # Cantidad
+        if self.position < len(self.tokens):
+            _, cantidad = self.tokens[self.position]
+            result["data"]["cantidad"] = float(cantidad)
+            self.position += 1
+        else:
+            raise SyntaxError("Falta la cantidad")
+
+        # Subtotal
+        if self.position < len(self.tokens):
+            _, subtotal = self.tokens[self.position]
+            result["data"]["subtotal"] = float(subtotal)
+            self.position += 1
+        else:
+            raise SyntaxError("Falta el subtotal")
+
+        return result

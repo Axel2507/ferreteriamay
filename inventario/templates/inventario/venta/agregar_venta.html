@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Venta</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+    <h2>Registrar Venta</h2>
+    {% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+{% endif %}
+
+    <div>
+        <label for="buscador">Buscar producto:</label>
+        <input type="text" id="buscador" placeholder="Nombre o código">
+        <button type="button" onclick="buscarProducto()">Buscar</button>
+    </div>
+
+    <div id="resultado" class="producto oculto">
+        <p><strong>Nombre:</strong> <span id="nombre"></span></p>
+        <p><strong>Código:</strong> <span id="codigo"></span></p>
+        <p><strong>Precio:</strong> $<span id="precio"></span></p>
+        <p><strong>Unidad de venta:</strong> <span id="unidad"></span></p>
+        <p><strong>Stock disponible:</strong> <span id="stock"></span></p>
+        <p class="stock-bajo oculto" id="alertaStock">Stock insuficiente</p>
+
+        <label for="cantidad">Cantidad:</label>
+        <input type="number" id="cantidad" value="1" min="1" step="1">
+        <button type="button" onclick="agregarAlCarrito()">Agregar al carrito</button>
+    </div>
+
+    <table class="carrito" id="tablaCarrito">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Unidad</th>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Subtotal</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <p><strong>Total:</strong> $<span id="total">0.00</span></p>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="detalle_venta" id="detalle_venta">
+        <button type="submit">Registrar Venta</button>
+    </form>
+
+    <script>
+        let productoSeleccionado = null;
+        let carrito = [];
+
+        async function buscarProducto() {
+            const q = document.getElementById('buscador').value;
+            if (!q) return;
+            const res = await fetch(`/material/api/materiales/?q=${q}`);
+            const datos = await res.json();
+            if (datos.length === 0) return alert("Producto no encontrado");
+            const producto = datos[0];
+
+            productoSeleccionado = producto;
+            document.getElementById('nombre').textContent = producto.nombre;
+            document.getElementById('codigo').textContent = producto.id;
+            document.getElementById('precio').textContent = producto.precio;
+            document.getElementById('unidad').textContent = producto.unidad;
+            document.getElementById('stock').textContent = producto.stock;
+            document.getElementById('resultado').classList.remove('oculto');
+        }
+
+        function agregarAlCarrito() {
+            const cantidad = parseFloat(document.getElementById('cantidad').value);
+            const alerta = document.getElementById('alertaStock');
+            alerta.classList.add('oculto');
+
+            if (!productoSeleccionado || isNaN(cantidad) || cantidad <= 0) return;
+
+            if (cantidad > productoSeleccionado.stock) {
+                alerta.classList.remove('oculto');
+                return;
+            }
+
+            const existente = carrito.find(p => p.codigo === productoSeleccionado.id);
+            if (existente) {
+                if (existente.cantidad + cantidad > productoSeleccionado.stock) {
+                    alerta.classList.remove('oculto');
+                    return;
+                }
+                existente.cantidad += cantidad;
+            } else {
+                carrito.push({
+                    codigo: productoSeleccionado.id,
+                    nombre: productoSeleccionado.nombre,
+                    unidad: productoSeleccionado.unidad,
+                    precio: productoSeleccionado.precio,
+                    cantidad: cantidad
+                });
+            }
+
+            renderCarrito();
+            productoSeleccionado = null;
+            document.getElementById('resultado').classList.add('oculto');
+        }
+
+        function renderCarrito() {
+            const tbody = document.querySelector('#tablaCarrito tbody');
+            tbody.innerHTML = '';
+            let total = 0;
+
+            carrito.forEach((p, i) => {
+                const subtotal = p.precio * p.cantidad;
+                total += subtotal;
+                const fila = `<tr>
+                    <td>${p.nombre}</td>
+                    <td>${p.unidad}</td>
+                    <td>${p.cantidad}</td>
+                    <td>$${p.precio.toFixed(2)}</td>
+                    <td>$${subtotal.toFixed(2)}</td>
+                    <td><button type="button" onclick="eliminar(${i})">Eliminar</button></td>
+                </tr>`;
+                tbody.innerHTML += fila;
+            });
+
+            document.getElementById('total').textContent = total.toFixed(2);
+
+            document.getElementById('detalle_venta').value = JSON.stringify({
+                total,
+                items: carrito.map(p => ({
+                    codigo: p.codigo,
+                    cantidad: p.cantidad,
+                    precio: p.precio,
+                    subtotal: p.precio * p.cantidad
+                }))
+            });
+        }
+
+        function eliminar(index) {
+            carrito.splice(index, 1);
+            renderCarrito();
+        }
+    </script>
+</body>
+</html>

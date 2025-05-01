@@ -237,3 +237,11 @@ tr:hover {
 .active-badge {
     background-color: var(--success-color);
 }
+
+.producto { margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; }
+
+.carrito { margin-top: 20px; border-collapse: collapse; width: 100%; }
+
+.carrito th, .carrito td { border: 1px solid #ccc; padding: 8px; }
+.oculto { display: none; }
+.stock-bajo { color: red; font-weight: bold; }

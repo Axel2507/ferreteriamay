@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from inventario.models.proveedor import Proveedor
 from inventario.analizador.procesador import CommandProcessor
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 def listar_proveedores(request):
     """Vista para listar todos los proveedores activos"""
@@ -43,9 +45,9 @@ def agregar_proveedor(request):
 
         procesador = CommandProcessor()
         resultado = procesador.process(comando)
-
+        url = reverse('listar_proveedores')  # este sí es el nombre de la vista
         if resultado["success"]:
-            return redirect('agregar_proveedor?success=1')
+            return HttpResponseRedirect(f'{url}?success=1')
         else:
             return render(request, 'inventario/proveedor/agregar_proveedor.html', {
                 'error': resultado["error"]

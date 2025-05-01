@@ -139,7 +139,7 @@ class CommandProcessor:
             direccion=data.get("direccion"),
             activo=data.get("activo", True)
         )
-        
+        proveedor.save()
         # Guardar y retornar éxito
         return {
             "success": True,
@@ -412,3 +412,66 @@ class CommandProcessor:
         }
     # Los demás métodos de ejecución para las diferentes combinaciones
     # ...
+    def execute_add_dven(self, data):
+        """
+        Ejecuta la adición de un detalle de venta (DVEN)
+        """
+        from inventario.models.venta import Venta
+        from inventario.models.venta import DetalleVenta
+        from inventario.models.material import Material
+
+        try:
+            # Obtener la venta asociada
+            venta = Venta.objects.get(id=data.get("id_venta"))
+            
+            # Obtener el material asociado
+            material = Material.objects.get(codigo=data.get("codigo"))
+            
+            # Validar y descontar stock
+            cantidad = data.get("cantidad")
+            if material.stock < cantidad:
+                return {
+                    "success": False,
+                    "error": f"Stock insuficiente para el material '{material.nombre}'"
+                }
+
+            # Crear el detalle de venta
+            detalle = DetalleVenta(
+                venta=venta,
+                material=material,
+                cantidad=cantidad,
+                subtotal=data.get("subtotal")
+            )
+            detalle.save()
+
+            # Descontar del stock
+            material.stock -= cantidad
+            material.save()
+
+            return {
+                "success": True,
+                "message": f"Detalle de venta agregado: {material.nombre} x{cantidad}",
+                "object": {
+                    "venta_id": venta.id,
+                    "codigo_material": material.codigo,
+                    "nombre_material": material.nombre,
+                    "cantidad": cantidad,
+                    "subtotal": data.get("subtotal")
+                }
+            }
+
+        except Venta.DoesNotExist:
+            return {
+                "success": False,
+                "error": f"La venta con ID {data.get('id_venta')} no existe"
+            }
+        except Material.DoesNotExist:
+            return {
+                "success": False,
+                "error": f"El material con código {data.get('codigo_material')} no existe"
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }

@@ -63,5 +63,5 @@ def agregar_material(request):
 
 def listar_materiales(request):
     """Vista para listar todos los materiales disponibles"""
-    materiales = Material.objects.select_related("categoria", "proveedor", "unidad").order_by("nombre")
+    materiales = Material.objects.select_related("categoria", "proveedor","unidad_compra", "unidad_venta").order_by("nombre")
     return render(request, 'inventario/material/listar_materiales.html', {"materiales": materiales})
