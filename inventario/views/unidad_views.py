@@ -7,22 +7,6 @@ def listar_unidades(request):
     unidades = Unidad.objects.filter(activo=True).order_by('nombre')
     return render(request, 'inventario/unidad/listar_unidades.html', {'unidades': unidades})
 
-def agregar_unidad(request):
-    """Vista para agregar una nueva unidad"""
-    if request.method == "POST":
-        nombre = request.POST.get('nombre')
-        abreviacion = request.POST.get('abreviacion')
-
-        if nombre and abreviacion:
-            Unidad.objects.create(nombre=nombre, abreviacion=abreviacion)
-            return redirect('listar_unidades')
-        else:
-            return render(request, 'inventario/unidad/agregar_unidad.html', {
-                'error': 'Todos los campos son obligatorios.'
-            })
-
-    return render(request, 'inventario/unidad/agregar_unidad.html')
-
 def eliminar_unidad(request, unidad_id):
     """Vista para desactivar una unidad"""
     unidad = Unidad.objects.get(id=unidad_id)
@@ -32,6 +16,7 @@ def eliminar_unidad(request, unidad_id):
 
 def agregar_unidad(request):
     """Vista para agregar una nueva unidad pasando por los analizadores"""
+    
     if request.method == "POST":
         nombre = request.POST.get('nombre')
         abreviacion = request.POST.get('abreviacion')
@@ -46,12 +31,19 @@ def agregar_unidad(request):
             if resultado["success"]:
                 return redirect('listar_unidades')
             else:
+                unidades = Unidad.objects.filter(activo=True).order_by('nombre')
                 return render(request, 'inventario/unidad/agregar_unidad.html', {
-                    'error': resultado["error"]
+                    'error': resultado["error"],
+                    'unidades': unidades
                 })
         else:
+            unidades = Unidad.objects.filter(activo=True).order_by('nombre')
             return render(request, 'inventario/unidad/agregar_unidad.html', {
-                'error': 'Todos los campos son obligatorios.'
+                'error': 'Todos los campos son obligatorios.',
+                'unidades': unidades
             })
 
-    return render(request, 'inventario/unidad/agregar_unidad.html')
+    unidades = Unidad.objects.filter(activo=True).order_by('nombre')
+    return render(request, 'inventario/unidad/agregar_unidad.html', {
+        'unidades': unidades
+    })

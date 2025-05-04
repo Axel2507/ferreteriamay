@@ -126,6 +126,16 @@ class CommandProcessor:
             abreviacion=data.get("abreviacion"),
             activa=data.get("activa", True)
         )
+        categoria.save()
+        return {
+            "success": True,
+            "message": f"Categoria '{categoria.nombre}' creado correctamente",
+            "object": {
+                "nombre": categoria.nombre,
+                "abreviacion": categoria.abreviacion,
+                "activa": categoria.activa
+           }
+    }
 
     def execute_add_prov(self, data):
         """Ejecuta la adición de un proveedor"""
@@ -309,68 +319,6 @@ class CommandProcessor:
                 "message": f"Material '{nombre}' eliminado permanentemente",
                 "action": "deleted"
             }
-    
-    def execute_get_mat(self, data):
-        """Ejecuta la obtención de información de un material"""
-        material = Material.objects.get(codigo=data.get("codigo"))
-        return {
-            "success": True,
-            "object": {
-                "codigo": material.codigo,
-                "nombre": material.nombre,
-                "descripcion": material.descripcion,
-                "precio_compra": float(material.precio_compra),
-                "precio_venta": float(material.precio_venta),
-                "stock": material.stock,
-                "stock_minimo": material.stock_minimo,
-                "categoria": {
-                    "id": material.categoria.id,
-                    "nombre": material.categoria.nombre
-                },
-                "proveedor": {
-                    "id": material.proveedor.id_proveedor,
-                    "nombre": material.proveedor.nombre
-                },
-                "unidad": {
-                    "id": material.unidad.id,
-                    "nombre": material.unidad.nombre,
-                    "abreviacion": material.unidad.abreviacion
-                }
-            }
-        }
-    
-    def execute_list_mat(self, data):
-        """Ejecuta el listado de materiales"""
-        # Obtener lista de materiales (con posibles filtros)
-        materials = Material.objects.all()
-        
-        # Aplicar filtros si existen en data
-        if "categoria_id" in data:
-            materials = materials.filter(categoria_id=data.get("categoria_id"))
-        if "stock_bajo" in data and data.get("stock_bajo"):
-            materials = materials.filter(stock__lt=F('stock_minimo'))
-
-        
-        # Limitar cantidad si es necesario
-        limit = data.get("limit", 100)
-        materials = materials[:limit]
-        
-        # Formatear resultados
-        result_list = []
-        for mat in materials:
-            result_list.append({
-                "codigo": mat.codigo,
-                "nombre": mat.nombre,
-                "precio_venta": float(mat.precio_venta),
-                "stock": mat.stock,
-                "categoria": mat.categoria.nombre
-            })
-        
-        return {
-            "success": True,
-            "count": len(result_list),
-            "objects": result_list
-        }
     
     def execute_rem_prov(self, data):
         proveedor = Proveedor.objects.get(id=data.get("id"))

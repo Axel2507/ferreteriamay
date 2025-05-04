@@ -6,6 +6,9 @@ from inventario.analizador.procesador import CommandProcessor
 from django.http import JsonResponse
 from inventario.models.material import Material
 from django.db.models import Q
+from django.shortcuts import render, get_object_or_404
+from inventario.models import Venta
+from inventario.models.venta import DetalleVenta
 
 def agregar_venta(request):
     """Vista para registrar una venta usando el analizador y carrito"""
@@ -52,7 +55,7 @@ def agregar_venta(request):
                 if not resultado_item.get("success"):
                     raise Exception(f"Error al agregar detalle: {resultado_item.get('error')}")
 
-            return redirect('listar_ventas')
+            return redirect('ticket_venta', venta_id=venta_id)
 
         except Exception as e:
             return render(request, 'inventario/venta/agregar_venta.html', {
@@ -83,3 +86,12 @@ def buscar_materiales(request):
             })
 
     return JsonResponse(resultados, safe=False)
+
+def ticket_venta(request, venta_id):
+    venta = get_object_or_404(Venta, id=venta_id)
+    detalles = DetalleVenta.objects.filter(venta=venta).select_related('material')
+
+    return render(request, 'inventario/venta/ticket_venta.html', {
+        'venta': venta,
+        'detalles': detalles,
+        })

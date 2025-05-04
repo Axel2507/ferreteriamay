@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+    <title>Ticket de Venta #{{ venta.id }}</title>
+</head>
+<body>
+   <div class="ticket">
+      <h2>Ticket de Venta</h2>
+         <p><strong>Venta ID:</strong> {{ venta.id }}</p>
+         <p><strong>Fecha:</strong> {{ venta.fecha|date:"d/m/Y H:i" }}</p>
+        <hr>
+         {% for d in detalles %}
+            <div class="linea">
+                <span>{{ d.material.nombre }} (x{{ d.cantidad }})</span>
+                <span>${{ d.subtotal }}</span>
+            </div>
+         {% endfor %}
+        <div class="total linea">
+            <span>Total:</span>
+            <span>${{ venta.total }}</span>
+        </div>
+    </div>
+</body>
+</html>

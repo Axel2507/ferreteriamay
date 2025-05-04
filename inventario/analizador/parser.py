@@ -305,7 +305,7 @@ class Parser:
         # Código del material
         if self.position < len(self.tokens):
             _, codigo = self.tokens[self.position]
-            result["data"]["codigo_materia"] = codigo[1:]
+            result["data"]["codigo"] = codigo[1:]
             self.position += 1
         else:
             raise SyntaxError("Falta el código del material")

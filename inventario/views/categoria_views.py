@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from inventario.models.categoria import Categoria
 from inventario.analizador.procesador import CommandProcessor
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 def agregar_categoria(request):
     if request.method == "POST":
@@ -16,8 +18,9 @@ def agregar_categoria(request):
         resultado = procesador.process(comando)
         print("Resultado del procesador:", resultado)
 
+        url = reverse('listar_categorias')  # este sí es el nombre de la vista
         if resultado["success"]:
-            return redirect('registrar_categoria?success=1')  # Redirige al listado de categorías
+            return HttpResponseRedirect(f'{url}?success=1') # Redirige al listado de categorías
         else:
             categorias = Categoria.objects.all().order_by('nombre')
             return render(request, 'inventario/categoria/agregar_categoria.html', {
