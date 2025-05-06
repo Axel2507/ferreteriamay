@@ -211,43 +211,64 @@ class CommandProcessor:
     
     def execute_act_mat(self, data):
         """Ejecuta la actualización de un material"""
-        # Obtener el material a actualizar
-        material = Material.objects.get(codigo=data.get("codigo"))
-        
-        # Actualizar campos básicos
-        if "nombre" in data:
+        try:
+            material = Material.objects.get(codigo=data.get("codigo"))
+
+            # Actualizar campos
             material.nombre = data.get("nombre")
-        if "descripcion" in data:
-            material.descripcion = data.get("descripcion")
-        if "precio_compra" in data:
             material.precio_compra = data.get("precio_compra")
-        if "precio_venta" in data:
             material.precio_venta = data.get("precio_venta")
-        if "stock" in data:
             material.stock = data.get("stock")
-        if "stock_minimo" in data:
             material.stock_minimo = data.get("stock_minimo")
-        
-        # Actualizar relaciones
-        if "categoria_id" in data:
             material.categoria = Categoria.objects.get(id=data.get("categoria_id"))
-        if "proveedor_id" in data:
             material.proveedor = Proveedor.objects.get(id_proveedor=data.get("proveedor_id"))
-        if "unidad_id" in data:
-            material.unidad = Unidad.objects.get(id=data.get("unidad_id"))
-        
-        # Guardar y retornar éxito
-        material.save()
-        return {
-            "success": True, 
-            "message": f"Material '{material.nombre}' actualizado correctamente",
-            "object": {
-                "codigo": material.codigo,
-                "nombre": material.nombre,
-                "precio_venta": float(material.precio_venta),
-                "stock": material.stock
+            material.unidad_compra = Unidad.objects.get(id=data.get("unidad_compra_id"))
+            material.unidad_venta = Unidad.objects.get(id=data.get("unidad_venta_id"))
+            material.factor_conversion = data.get("factor_conversion")
+            material.fecha_caducidad = data.get("fecha_caducidad") if data.get("fecha_caducidad") != 'NULL' else None
+
+            material.save()
+
+            return {
+                "success": True,
+                "message": f"Material '{material.nombre}' creado correctamente",
+                "object": {
+                    "codigo": material.codigo,
+                    "nombre": material.nombre,
+                    "precio_compra": float(material.precio_compra),
+                    "precio_venta": float(material.precio_venta),
+                    "stock": material.stock,
+                    "stock_minimo": material.stock_minimo,
+                    "categoria": {
+                        "id": material.categoria.id,
+                        "nombre": material.categoria.nombre
+                    },
+                    "proveedor": {
+                        "id": material.proveedor.id_proveedor,
+                        "nombre_empresa": material.proveedor.nombre_empresa
+                    },
+                    "unidad_compra": {
+                        "id": material.unidad_compra.id,
+                        "nombre": material.unidad_compra.nombre
+                    },
+                    "unidad_venta": {
+                        "id": material.unidad_venta.id,
+                        "nombre": material.unidad_venta.nombre
+                    },
+                    "factor_conversion": material.factor_conversion,
+                    "activo": material.activo
             }
-        }
+            }
+        except Material.DoesNotExist:
+            return {
+                "success": False,
+                "error": "El material no existe"
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }
     
     def execute_act_cat(self, data):
         """Ejecuta la actualización de una categoría"""

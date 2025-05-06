@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Actualizar Material</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+<div class="container">
+    <h2>Actualizar Material</h2>
+    {% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+    <form id="formMaterial" method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Código de Barras:</label>
+                    <input type="text" class="form-control" id="codigo" name="codigo" placeholder="Escanea o ingresa manualmente" value="{{ material.codigo }}" required readonly>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Nombre Material:</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" value="{{ material.nombre }}" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Cantidad en Stock:</label>
+                    <input type="number" class="form-control" id="stock" name="stock" min="0" value="{{ material.stock }}" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Stock Mínimo:</label>
+                    <input type="number" class="form-control" id="stock_minimo" name="stock_minimo" min="0" value="{{ material.stock_minimo }}" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Precio de Compra:</label>
+                    <input type="number" class="form-control" id="precio_compra" name="precio_compra" min="0" step="0.01" value="{{ material.precio_compra }}" required>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Precio de Venta:</label>
+                    <input type="number" class="form-control" id="precio_venta" name="precio_venta" min="0" step="0.01" value="{{ material.precio_venta }}" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="form-label">Categoría:</label>
+                    <select class="form-select" id="categoria" name="categoria" required>
+                        <option value="">Seleccionar categoría</option>
+                        {% for categoria in categorias %}
+                            <option value="{{ categoria.id }}" {% if categoria.id == material.categoria.id %}selected{% endif %}>{{ categoria.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="form-label">Proveedor:</label>
+                    <select class="form-select" id="proveedor" name="proveedor" required>
+                        <option value="">Seleccionar proveedor</option>
+                        {% for proveedor in proveedores %}
+                            <option value="{{ proveedor.id_proveedor }}" {% if proveedor.id_proveedor == material.proveedor.id_proveedor %}selected{% endif %}>{{ proveedor.nombre_empresa }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="form-label">Unidad de Medida por Compra:</label>
+                    <select class="form-select" id="unidad_compra" name="unidad_compra" required>
+                        <option value="">Seleccionar unidad</option>
+                        {% for unidad in unidades %}
+                            <option value="{{ unidad.id }}" {% if unidad.id == material.unidad_compra.id %}selected{% endif %}>{{ unidad.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="form-label">Unidad de Medida por Venta:</label>
+                    <select class="form-select" id="unidad_venta" name="unidad_venta" required>
+                        <option value="">Seleccionar unidad</option>
+                        {% for unidad in unidades %}
+                            <option value="{{ unidad.id }}" {% if unidad.id == material.unidad_venta.id %}selected{% endif %}>{{ unidad.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Factor de Conversión:</label>
+                    <input type="number" class="form-control" id="factorc" name="factor_conversion" min="1" step="0.01" value="{{ material.factor_conversion }}" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Fecha de Caducidad (opcional):</label>
+                    <input type="date" class="form-control" id="fecha_caducidad" name="fecha_caducidad" value="{{ material.fecha_caducidad|date:'Y-m-d' }}">
+                </div>
+            </div>
+            <div class="col-md-6" style="margin-top: 30px; display: flex; gap: 10px;">
+                <div class="form-group">
+                    <button type="submit" class="btn" id="actualizarMaterial">Actualizar Material</button>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn" id="eliminarMaterial">Eliminar Material</button>
+                </div>
+        </div>
+
+    </form>
+</div>
+</body>
+</html>

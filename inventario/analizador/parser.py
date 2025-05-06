@@ -327,3 +327,112 @@ class Parser:
             raise SyntaxError("Falta el subtotal")
 
         return result
+    
+    def parse_act_mat(self):
+        """Analiza el comando ACT MAT"""
+        result = {
+            "command": "ACT",
+            "entity": "MAT",
+            "data": {}
+        }
+        
+        # Validar y extraer parámetros
+        # Código
+        if self.position < len(self.tokens):
+            _, codigo = self.tokens[self.position]
+            result["data"]["codigo"] = codigo[1:]
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un código para el material")
+        
+        # Nombre
+        if self.position < len(self.tokens):
+            _, nombre = self.tokens[self.position]
+            result["data"]["nombre"] = nombre
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un nombre para el material")
+        
+        # Precio compra
+        if self.position < len(self.tokens):
+            _, precio_compra = self.tokens[self.position]
+            result["data"]["precio_compra"] = float(precio_compra)
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un precio de compra")
+        
+        # Precio venta
+        if self.position < len(self.tokens):
+            _, precio_venta = self.tokens[self.position]
+            result["data"]["precio_venta"] = float(precio_venta)
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un precio de venta")
+        
+        # Stock
+        if self.position < len(self.tokens):
+            _, stock = self.tokens[self.position]
+            result["data"]["stock"] = int(stock)
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba una cantidad de stock")
+        
+        # Stock mínimo
+        if self.position < len(self.tokens):
+            _, stock_min = self.tokens[self.position]
+            result["data"]["stock_minimo"] = int(stock_min)
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba una cantidad de stock mínimo")
+        
+        # Categoría ID
+        if self.position < len(self.tokens):
+            _, categoria_id = self.tokens[self.position]
+            result["data"]["categoria_id"] = int(categoria_id[1:])
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un ID de categoría")
+        
+        # Proveedor ID
+        if self.position < len(self.tokens):
+            _, proveedor_id = self.tokens[self.position]
+            result["data"]["proveedor_id"] = int(proveedor_id[1:])
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un ID de proveedor")
+        
+        # Unidad Compra
+        if self.position < len(self.tokens):
+            _, unidad_compra_id = self.tokens[self.position]
+            result["data"]["unidad_compra_id"] = int(unidad_compra_id[1:])
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un ID de unidad de compra")
+        
+        # Unidad venta
+        if self.position < len(self.tokens):
+            _, unidad_venta_id = self.tokens[self.position]
+            result["data"]["unidad_venta_id"] = int(unidad_venta_id[1:])
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba el ID de unidad de venta")
+
+        # Factor conversión
+        if self.position < len(self.tokens):
+            _, factor_conversion = self.tokens[self.position]
+            result["data"]["factor_conversion"] = float(factor_conversion)
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba el factor de conversión")
+        
+        if self.position < len(self.tokens):
+            token_type, fecha = self.tokens[self.position]
+            if token_type == "Fecha":
+                result["data"]["fecha_caducidad"] = fecha
+            elif token_type == "NULL":
+                result["data"]["fecha_caducidad"] = None
+            self.position += 1
+        else:
+            # Si no viene, dejamos None
+            result["data"]["fecha_caducidad"] = None
+        return result
