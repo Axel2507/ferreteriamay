@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Ferretería May{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <link rel="stylesheet" href="{% static 'css/hamburger.css' %}">
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <h1>Ferretería May</h1>
+        </div>
+        <div class="hamburger-menu">
+            <div class="hamburger-icon" id="hamburger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <nav class="nav-menu" id="nav-menu">
+                <ul>
+                    <li><a href="/">Inicio</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">Categorías</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'listar_categorias' %}">Listar Categorías</a></li>
+                            <li><a href="{% url 'agregar_categoria' %}">Agregar Categoría</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">Materiales</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'listar_materiales'%}">Listar Materiales</a></li>
+                            <li><a href="{% url 'agregar_material' %}">Agregar Material</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">Proveedores</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'listar_proveedores' %}">Listar Proveedores</a></li>
+                            <li><a href="{% url 'agregar_proveedor' %}">Agregar Proveedor</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">Unidades</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'listar_unidades' %}">Listar Unidades</a></li>
+                            <li><a href="{% url 'agregar_unidad' %}">Agregar Unidad</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">Ventas</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'agregar_venta' %}">Registrar Venta</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; {% now "Y" %} Ferretería May. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="{% static 'js/hamburger.js' %}"></script>
+</body>
+</html>
