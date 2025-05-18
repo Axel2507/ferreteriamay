@@ -269,6 +269,34 @@ class CommandProcessor:
                 "success": False,
                 "error": str(e)
             }
+        
+
+    def execute_rem_mat(self, data):
+        """Ejecuta la desactivación de un material (eliminación lógica)"""
+
+        # Buscar el material por su código
+        try:
+            material = Material.objects.get(codigo=data.get("codigo"))
+        except Material.DoesNotExist:
+            return {
+                "success": False,
+                "message": f"No se encontró el material con código '{data.get('codigo')}'"
+            }
+
+        # Marcarlo como inactivo
+        material.activo = False
+        material.save()
+
+        return {
+            "success": True,
+            "message": f"Material '{material.nombre}' desactivado correctamente",
+            "object": {
+                "codigo": material.codigo,
+                "nombre": material.nombre,
+                "activo": material.activo
+            }
+        }
+
     
     def execute_act_cat(self, data):
         """Ejecuta la actualización de una categoría"""
@@ -444,3 +472,5 @@ class CommandProcessor:
                 "success": False,
                 "error": str(e)
             }
+
+    

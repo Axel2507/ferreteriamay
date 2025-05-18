@@ -16,8 +16,8 @@ class Parser:
         
         # Identificar comando principal
         command_token, command_value = self.tokens[0]
-        if command_token != "ADD" and command_token != "ACT" and command_token != "REM" and command_token != "GET" and command_token != "LIST":
-            raise SyntaxError(f"Se esperaba un comando (ADD, ACT, REM, GET, LIST), encontrado: {command_value}")
+        if command_token != "ADD" and command_token != "ACT" and command_token != "REM":
+            raise SyntaxError(f"Se esperaba un comando (ADD, ACT, REM), encontrado: {command_value}")
         
         self.command = command_value
         self.position += 1
@@ -436,3 +436,23 @@ class Parser:
             # Si no viene, dejamos None
             result["data"]["fecha_caducidad"] = None
         return result
+
+    def parse_rem_mat(self):
+        """Analiza el comando REM MAT"""
+        result = {
+            "command": "REM",
+            "entity": "MAT",
+            "data": {}
+        }
+
+        # Validar y extraer el código del material
+        if self.position < len(self.tokens):
+            _, codigo = self.tokens[self.position]
+            result["data"]["codigo"] = codigo[1:]  # quitamos el prefijo si tiene (#123 → 123)
+            self.position += 1
+        else:
+            raise SyntaxError("Se esperaba un código para el material a remover")
+        
+        return result
+    
+   

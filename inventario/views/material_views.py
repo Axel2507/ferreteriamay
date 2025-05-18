@@ -135,5 +135,17 @@ def actualizar_material(request, codigo):
 def eliminar_material(request, codigo):
     if request.method == "POST":
         material = get_object_or_404(Material, codigo=codigo)
-        material.delete()
-        return redirect('listar_materiales')
+        comando= f'REM MAT C{codigo}'
+        procesador = CommandProcessor()
+        resultado= procesador.process(comando)
+        if resultado["success"]:
+            return redirect('listar_materiales')
+        else:
+            return render(request, 'inventario/material/actualizar_material.html', {
+                'material': material,
+                'error': resultado["error"]
+            })
+
+    return render(request, 'inventario/material/actualizar_material.html', {
+        'material': material,
+    })

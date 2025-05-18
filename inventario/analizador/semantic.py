@@ -213,9 +213,16 @@ class SemanticAnalyzer:
         return True
     # Más métodos para cada combinación de comando y entidad
     # ...
-    def validate_add_ven(self):
-        """Valida que el total de venta sea positivo"""
-        total = self.data.get("total")
-        if total <= 0:
-            raise SemanticError("El total de la venta debe ser mayor a cero")
+    def analyze_rem_mat(self):
+        """Analiza semánticamente la eliminación de un material"""
+
+        codigo = self.data.get("codigo")
+        
+        # Verificar que el material exista
+        try:
+            material = Material.objects.get(codigo=codigo)
+        except ObjectDoesNotExist:
+            raise SemanticError(f"No existe un material con el código '{codigo}'")
+        
+        # Todo está bien
         return True
