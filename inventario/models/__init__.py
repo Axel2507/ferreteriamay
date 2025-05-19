@@ -5,3 +5,7 @@ from .unidad import Unidad
 from .descuento import Descuento
 from .devolucion import Devolucion
 from .venta import Venta
+from .productovendidosemanal import ProductoVendidoSemanal
+from .notificacion import Notificacion
+from .reporteventasemanal import ReporteVentaSemanal
+from .usuario import Usuario

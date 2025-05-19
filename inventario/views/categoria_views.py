@@ -3,6 +3,8 @@ from inventario.models.categoria import Categoria
 from inventario.analizador.procesador import CommandProcessor
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, redirect
+
 
 def agregar_categoria(request):
     if request.method == "POST":
@@ -41,3 +43,36 @@ def listar_categorias(request):
     }
 
     return render(request, 'inventario/categoria/listar_categorias.html', context)
+
+def actualizar_categoria(request, id):
+    categoria = get_object_or_404(Categoria, id=id)
+
+    if request.method == "POST":
+        nombre = request.POST.get('nombre')
+        abreviacion = request.POST.get('abreviacion')
+
+        campos_requeridos = [nombre, abreviacion]
+        if any(campo is None or campo.strip() == "" for campo in campos_requeridos):
+            return render(request, 'inventario/categoria/actualizar_categoria.html', {
+                'categoria': categoria,
+                'error': 'Todos los campos son obligatorios.'
+            })
+
+        comando = f'ACT CAT I{categoria.id} "{nombre}" {abreviacion.upper()}'
+        print("Comando enviado al procesador:", comando)
+
+        procesador = CommandProcessor()
+        resultado = procesador.process(comando)
+        print("Resultado del procesador:", resultado)
+
+        if resultado["success"]:
+            return redirect('listar_categorias')
+        else:
+            return render(request, 'inventario/categoria/actualizar_categoria.html', {
+                'categoria': categoria,
+                'error': resultado["error"]
+            })
+
+    return render(request, 'inventario/categoria/actualizar_categoria.html', {
+        'categoria': categoria
+    })

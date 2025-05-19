@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container">
+    <h2>Actualizar Categoría</h2>
+
+    {% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Formulario de actualización -->
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="nombreCategoria">Nombre de la categoría:</label>
+            <input type="text" class="form-control" id="nombreCategoria" name="nombre" value="{{ categoria.nombre }}" required>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="abreviacionCategoria">Abreviación (3 letras):</label>
+            <input type="text" class="form-control" id="abreviacionCategoria" name="abreviacion" maxlength="3" value="{{ categoria.abreviacion }}" required>
+        </div>
+
+        <button type="submit" name="actualizar" class="btn btn-success mt-3">Actualizar Categoría</button>
+    </form>
+
+    <!-- Botones de eliminar y cancelar -->
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <form method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta categoría? Si contiene materiales, no podrá eliminarse.');">
+            {% csrf_token %}
+            <button type="submit" name="eliminar" class="btn btn-danger">Eliminar Categoría</button>
+        </form>
+
+        <a href="{% url 'listar_categorias' %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</div>
+
+{% endblock %}
