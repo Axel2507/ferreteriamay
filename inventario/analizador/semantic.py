@@ -169,6 +169,28 @@ class SemanticAnalyzer:
         
         # Todo está bien, el comando es semánticamente válido
         return True
+    
+    def analyze_act_cat(self):
+        """Analiza semánticamente la actualización de una categoría"""
+        # Verificar que la categoría exista
+        try:
+            categoria = Categoria.objects.get(id=self.data.get("id"))
+        except ObjectDoesNotExist:
+            raise SemanticError(f"No existe una categoría con ID {self.data.get('id')}")
+
+        # Verificar si se desea cambiar el nombre y si está duplicado
+        nuevo_nombre = self.data.get("nombre")
+        if nuevo_nombre and nuevo_nombre != categoria.nombre:
+            if Categoria.objects.filter(nombre=nuevo_nombre).exclude(id=categoria.id).exists():
+                raise SemanticError(f"Ya existe una categoría con el nombre '{nuevo_nombre}'")
+
+        # Verificar si se desea cambiar la abreviación y si está duplicada
+        nueva_abreviacion = self.data.get("abreviacion")
+        if nueva_abreviacion and nueva_abreviacion != categoria.abreviacion:
+            if Categoria.objects.filter(abreviacion=nueva_abreviacion).exclude(id=categoria.id).exists():
+                raise SemanticError(f"Ya existe una categoría con la abreviación '{nueva_abreviacion}'")
+
+        return True
      
     def analyze_add_prov(self):
         """Analiza semánticamente la adición de una categoría"""

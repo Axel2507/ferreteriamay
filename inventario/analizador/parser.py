@@ -194,6 +194,40 @@ class Parser:
         
         return result
     
+    def parse_act_cat(self):
+            """Analiza el comando ACT CAT"""
+            result = {
+                "command": "ACT",
+                "entity": "CAT",
+                "data": {}
+        }
+
+            # ID de categoría
+            if self.position < len(self.tokens):
+                _, categoria_id = self.tokens[self.position]
+                result["data"]["id"] = int(categoria_id[1:])  # Elimina el prefijo 'I'
+                self.position += 1
+            else:
+                raise SyntaxError("Se esperaba un ID de categoría")
+
+            # Nombre
+            if self.position < len(self.tokens):
+                _, nombre = self.tokens[self.position]
+                result["data"]["nombre"] = nombre
+                self.position += 1
+            else:
+                raise SyntaxError("Se esperaba un nombre para la categoría")
+
+            # Abreviación
+            if self.position < len(self.tokens):
+                _, abreviacion = self.tokens[self.position]
+                result["data"]["abreviacion"] = abreviacion
+                self.position += 1
+            else:
+                raise SyntaxError("Se esperaba una abreviación para la categoría")
+
+            return result
+    
     def parse_add_ven(self):
         """Analiza el comando ADD VEN"""
         result = {

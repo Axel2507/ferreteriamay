@@ -297,7 +297,6 @@ class CommandProcessor:
             }
         }
 
-    
     def execute_act_cat(self, data):
         """Ejecuta la actualización de una categoría"""
         # Obtener la categoría a actualizar
@@ -346,28 +345,32 @@ class CommandProcessor:
                 "message": f"Categoría '{nombre}' eliminada permanentemente",
                 "action": "deleted"
             }
-    
-    def execute_rem_mat(self, data):
-        """Ejecuta la eliminación de un material"""
-        # Obtener el material
-        material = Material.objects.get(codigo=data.get("codigo"))
-        nombre = material.nombre
         
-        # Verificar si tiene ventas asociadas
-        if material.ventas.exists():
-            # No se puede eliminar, está asociado a datos históricos
+
+    def execute_rem_cat(self, data):
+        """Ejecuta la eliminación de una categoría"""
+        # Obtener la categoría
+        categoria = Categoria.objects.get(id=data.get("id"))
+        nombre = categoria.nombre
+        
+        # Verificar si tiene materiales asociados
+        if categoria.materiales.exists():
+            # No eliminar, solo desactivar
+            categoria.desactivar()
             return {
-                "success": False, 
-                "error": f"No se puede eliminar el material '{nombre}' porque tiene ventas asociadas"
+                "success": True, 
+                "message": f"Categoría '{nombre}' desactivada (tiene materiales asociados)",
+                "action": "deactivated"
             }
         else:
             # Eliminar completamente
-            material.delete()
+            categoria.delete()
             return {
                 "success": True, 
-                "message": f"Material '{nombre}' eliminado permanentemente",
+                "message": f"Categoría '{nombre}' eliminada permanentemente",
                 "action": "deleted"
             }
+    
     
     def execute_rem_prov(self, data):
         proveedor = Proveedor.objects.get(id=data.get("id"))
