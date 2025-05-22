@@ -4,16 +4,16 @@ import websockets
 import json
 import ssl
 
-SERIAL_PORT = 'COM4'  # ← Cambia según tu puerto
+SERIAL_PORT = 'COM4'  # Cambia si tu Arduino usa otro puerto
 BAUD_RATE = 9600
-WS_URI = "wss://ec2-3-87-2-50.compute-1.amazonaws.com:9000/wss/barcodes/"
+WS_URI = "wss://ferremay.com/ws/barcodes/"
 
 ssl_context = ssl.create_default_context()
 ssl_context.check_hostname = False
-ssl_context.verify_mode = ssl.CERT_NONE
+ssl_context.verify_mode = ssl.CERT_NONE  # Solo para pruebas. En producción usa CERT_REQUIRED
 
 async def serial_to_ws():
-    async with websockets.connect(WS_URI) as ws:
+    async with websockets.connect(WS_URI, ssl=ssl_context) as ws:
         ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
         while True:
             if ser.in_waiting:
