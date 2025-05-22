@@ -66,34 +66,25 @@
         </table>
     </div>
     <script>
-// ... (después de incluir socket.io.min.js) ...
-document.addEventListener('DOMContentLoaded', (event) => {
-    const socket = io.connect('http://127.0.0.1:5001');
-    const searchInput = document.getElementById('searchInput'); // Asegúrate que este ID existe
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    const socket = new WebSocket("wss://ferremay.com/ws/barcodes/");
 
-    socket.on('connect', () => console.log('LISTAR_MAT: Conectado al WebSocket.'));
-    // ... otros manejadores de conexión ...
+    socket.onopen = () => console.log('✅ LISTAR_MAT: WebSocket conectado');
 
-    socket.on('nuevo_codigo_barra', (data) => {
+    socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
         const barcode = data.barcode;
-        console.log('LISTAR_MAT: Código recibido:', barcode);
+        console.log('📥 LISTAR_MAT: Código recibido:', barcode);
         if (searchInput && barcode && barcode.trim() !== "") {
             searchInput.value = barcode;
-            // Opcional: auto-submit form
-            // const searchForm = document.getElementById('searchForm');
-            // if (searchForm) searchForm.submit();
+            // Opcional: auto-submit:
+            // searchInput.form.submit();
         }
-    });
-    socket.on('last_known_barcode', (data) => {
-            const barcode = data.barcode;
-            console.log('LISTAR_MAT: Último código conocido recibido al conectar:', barcode);
-            if (barcode && typeof barcode === 'string' && barcode.trim() !== "") {
-                if (searchInput && searchInput.value === "") { // Solo rellenar si está vacío
-                    console.log("LISTAR_MAT: Rellenando input 'codigo' con último código conocido:", barcode);
-                    searchInput.value = barcode;
-                }
-            }
-        });
+    };
+
+    socket.onerror = (error) => console.error('❌ LISTAR_MAT: Error WebSocket:', error);
+    socket.onclose = () => console.warn('🔌 LISTAR_MAT: WebSocket cerrado');
 });
 </script>
 </body>

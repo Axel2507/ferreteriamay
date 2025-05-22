@@ -7,7 +7,6 @@
     <meta charset="UTF-8">
     <title>Registrar Venta</title>
     <link rel="stylesheet" href="{% static 'css/estilos.css' %}?v={% now 'U' %}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
 </head>
 <body>
     <h2>Registrar Venta</h2>
@@ -152,43 +151,29 @@
 
         // (Necesitarías la función fetchBarcodeFromBridge() definida arriba también)
 
-        document.addEventListener('DOMContentLoaded', (event) => {
-        const socket = io.connect('http://127.0.0.1:5001');
-        const buscadorInput = document.getElementById('buscador'); // Asegúrate que este ID existe
+        document.addEventListener('DOMContentLoaded', () => {
+    const buscadorInput = document.getElementById('buscador');
+    const socket = new WebSocket("wss://ferremay.com/ws/barcodes/");
 
-            socket.on('connect', () => console.log('AGREGAR_VENTA: Conectado al WebSocket.'));
-            // ... otros manejadores de conexión ...
+    socket.onopen = () => console.log('✅ AGREGAR_VENTA: WebSocket conectado');
 
-            socket.on('nuevo_codigo_barra', (data) => {
-                const barcode = data.barcode;
-                console.log('AGREGAR_VENTA: Código recibido:', barcode);
-                if (barcode && typeof barcode === 'string' && barcode.trim() !== "") {
-                    if (buscadorInput) {
-                        if (buscadorInput.value !== barcode) {
-                            console.log("AGREGAR_VENTA: Actualizando input 'buscador' con:", barcode);
-                            buscadorInput.value = barcode;
-                            // Opcional: Mover el foco o realizar otra acción
-                            // codigoInput.focus();
-                        } else {
-                            // console.log("AGREGAR_MAT: El código de barras ya está en el input 'codigo'.");
-                        }
-                    } else {
-                        console.error("AGREGAR_VENTA: ¡ERROR! No se encontró el input con id='codigo'.");
-                    }
-                }
-            });
-            
-            socket.on('last_known_barcode', (data) => {
-            const barcode = data.barcode;
-            console.log('AGREGAR_VENTA: Último código conocido recibido al conectar:', barcode);
-            if (barcode && typeof barcode === 'string' && barcode.trim() !== "") {
-                if (buscadorInput && buscadorInput.value === "") { // Solo rellenar si está vacío
-                    console.log("AGREGAR_VENTA: Rellenando input 'codigo' con último código conocido:", barcode);
-                    buscadorInput.value = barcode;
-                }
+    socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        const barcode = data.barcode;
+        console.log('📥 AGREGAR_VENTA: Código recibido:', barcode);
+
+        if (barcode && typeof barcode === 'string' && barcode.trim() !== "") {
+            if (buscadorInput && buscadorInput.value !== barcode) {
+                buscadorInput.value = barcode;
+                // También puedes disparar automáticamente la búsqueda si quieres:
+                // buscarProducto();
             }
-        });
-    });
+        }
+    };
+
+    socket.onerror = (error) => console.error('❌ AGREGAR_VENTA: Error WebSocket:', error);
+    socket.onclose = () => console.warn('🔌 AGREGAR_VENTA: WebSocket cerrado');
+});
     </script>
 </body>
 </html>
