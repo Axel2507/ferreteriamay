@@ -32,6 +32,7 @@ class CommandProcessor:
             semantic = SemanticAnalyzer(parsed_data)
             semantic.analyze()
             
+            print("Paso el semantico")
             # 4. Ejecución del comando
             return self.execute_command(parsed_data)
         except Exception as e:
@@ -453,7 +454,7 @@ class CommandProcessor:
                 "message": f"Detalle de venta agregado: {material.nombre} x{cantidad}",
                 "object": {
                     "venta_id": venta.id,
-                    "codigo_material": material.codigo,
+                    "material_id": material.codigo,
                     "nombre_material": material.nombre,
                     "cantidad": cantidad,
                     "subtotal": data.get("subtotal")
@@ -468,7 +469,7 @@ class CommandProcessor:
         except Material.DoesNotExist:
             return {
                 "success": False,
-                "error": f"El material con código {data.get('codigo_material')} no existe"
+                "error": f"El material con código {data.get('material_id')} no existe"
             }
         except Exception as e:
             return {
