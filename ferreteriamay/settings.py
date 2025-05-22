@@ -114,6 +114,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://ferremay.com",
+    "https://www.ferremay.com",
+]
+
+ALLOWED_HOSTS = ["ferremay.com", "www.ferremay.com"]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
