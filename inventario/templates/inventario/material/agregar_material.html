@@ -139,60 +139,33 @@
         </form>
     </div>
     <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        // Conéctate al servidor Socket.IO (tu barcode_bridge.py)
-        // Asegúrate que la URL y el puerto coinciden con tu barcode_bridge.py
-        const socket = io.connect('http://ferremay.com:5001');
+document.addEventListener('DOMContentLoaded', function () {
+    const codigoInput = document.getElementById('codigo');
+    const protocolo = window.location.protocol === 'https:' ? 'wss' : 'ws';
+    const socket = new WebSocket(`${protocolo}://${window.location.host}/ws/barcodes/`);
 
-        const codigoInput = document.getElementById('codigo'); // ID del input
+    socket.onopen = function () {
+        console.log("Conectado al WebSocket del servidor Django");
+    };
 
-        socket.on('connect', () => {
-            console.log('AGREGAR_MAT: Conectado al servidor WebSocket del puente.');
-            // Podrías solicitar el último código aquí si el servidor no lo envía automáticamente al conectar
-            // socket.emit('request_last_barcode'); 
-        });
-
-        socket.on('disconnect', () => {
-            console.log('AGREGAR_MAT: Desconectado del servidor WebSocket del puente.');
-        });
-
-        socket.on('connect_error', (error) => {
-            console.error('AGREGAR_MAT: Error de conexión WebSocket:', error);
-        });
-
-        // Escuchar el evento 'nuevo_codigo_barra' enviado por el servidor
-        socket.on('nuevo_codigo_barra', (data) => {
-            const barcode = data.barcode;
-            console.log('AGREGAR_MAT: Nuevo código de barras recibido vía WebSocket:', barcode);
-
-            if (barcode && typeof barcode === 'string' && barcode.trim() !== "") {
-                if (codigoInput) {
-                    if (codigoInput.value !== barcode) {
-                        console.log("AGREGAR_MAT: Actualizando input 'codigo' con:", barcode);
-                        codigoInput.value = barcode;
-                        // Opcional: Mover el foco o realizar otra acción
-                        // codigoInput.focus();
-                    } else {
-                        // console.log("AGREGAR_MAT: El código de barras ya está en el input 'codigo'.");
-                    }
-                } else {
-                    console.error("AGREGAR_MAT: ¡ERROR! No se encontró el input con id='codigo'.");
-                }
+    socket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        if (data.barcode) {
+            console.log("Recibido código:", data.barcode);
+            if (codigoInput && codigoInput.value !== data.barcode) {
+                codigoInput.value = data.barcode;
             }
-        });
+        }
+    };
 
-        // Escuchar el evento 'last_known_barcode' (si el servidor lo envía al conectar)
-        socket.on('last_known_barcode', (data) => {
-            const barcode = data.barcode;
-            console.log('AGREGAR_MAT: Último código conocido recibido al conectar:', barcode);
-            if (barcode && typeof barcode === 'string' && barcode.trim() !== "") {
-                if (codigoInput && codigoInput.value === "") { // Solo rellenar si está vacío
-                    console.log("AGREGAR_MAT: Rellenando input 'codigo' con último código conocido:", barcode);
-                    codigoInput.value = barcode;
-                }
-            }
-        });
-    });
+    socket.onclose = function () {
+        console.log("Conexión WebSocket cerrada.");
+    };
+
+    socket.onerror = function (error) {
+        console.error("WebSocket error:", error);
+    };
+});
 </script>
 </body>
 </html>
