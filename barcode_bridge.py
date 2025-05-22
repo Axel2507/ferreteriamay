@@ -6,7 +6,7 @@ import ssl
 
 SERIAL_PORT = 'COM4'  # ← Cambia según tu puerto
 BAUD_RATE = 9600
-WS_URI = "ws://ec2-3-87-2-50.compute-1.amazonaws.com:9000/ws/barcode/"
+WS_URI = "wss://ec2-3-87-2-50.compute-1.amazonaws.com:9000/wss/barcodes/"
 
 ssl_context = ssl.create_default_context()
 ssl_context.check_hostname = False

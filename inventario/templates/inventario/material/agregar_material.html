@@ -139,31 +139,30 @@
         </form>
     </div>
     <script>
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
     const codigoInput = document.getElementById('codigo');
-    const protocolo = window.location.protocol === 'https:' ? 'wss' : 'ws';
-    const socket = new WebSocket(`${protocolo}://${window.location.host}/ws/barcodes/`);
+    const socket = new WebSocket("wss://ferremay.com/ws/barcodes/");
 
-    socket.onopen = function () {
-        console.log("Conectado al WebSocket del servidor Django");
+    socket.onopen = () => {
+        console.log("✅ WebSocket conectado desde navegador");
     };
 
-    socket.onmessage = function (event) {
+    socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.barcode) {
-            console.log("Recibido código:", data.barcode);
+            console.log("📥 Código recibido:", data.barcode);
             if (codigoInput && codigoInput.value !== data.barcode) {
                 codigoInput.value = data.barcode;
             }
         }
     };
 
-    socket.onclose = function () {
-        console.log("Conexión WebSocket cerrada.");
+    socket.onerror = (error) => {
+        console.error("❌ Error en WebSocket:", error);
     };
 
-    socket.onerror = function (error) {
-        console.error("WebSocket error:", error);
+    socket.onclose = () => {
+        console.warn("🔌 WebSocket cerrado");
     };
 });
 </script>
