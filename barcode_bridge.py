@@ -116,4 +116,4 @@ if __name__ == '__main__':
     # Iniciar el servidor Flask con SocketIO
     print(f"Servidor Flask con SocketIO iniciando en http://{HTTP_HOST}:{HTTP_PORT}")
     # socketio.run(app, host=HTTP_HOST, port=HTTP_PORT, debug=True, use_reloader=False) # debug=True puede dar problemas con hilos a veces
-    socketio.run(app, host=HTTP_HOST, port=HTTP_PORT, debug=False)
+    socketio.run(app, host='0.0.0.0', port=5001)
