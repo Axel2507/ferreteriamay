@@ -5,7 +5,7 @@ import json
 
 SERIAL_PORT = 'COM4'  # ← Cambia según tu puerto
 BAUD_RATE = 9600
-WS_URI = "wss://TUDOMINIO/ws/barcode/"
+WS_URI = "wss://ferremay.com/ws/barcode/"
 
 async def serial_to_ws():
     async with websockets.connect(WS_URI) as ws:
