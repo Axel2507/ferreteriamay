@@ -26,7 +26,7 @@ class Lexer:
         "Abreviacion": r"^[A-Z]{3}\b",
         "Precio": r"^\$?\d+\.\d{2}\b",
         "ID": r"^I[0-9]+\b",
-        "Telefono": r"^\(\d{2,3}\)\d{3}-\d{3}-\d{4}\b",
+        "Telefono": r"\(\d{3}\)\d{3}-\d{4}",
         "Email": r"^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]{0,63}[a-zA-Z0-9])?@(?:[a-zA-Z0-9-]{1,63}\.)+[a-zA-Z]{2,63}\b",
         "CODIGO": r"^C[0-9_-]{1,50}\b",
         "Nombre": r'^"[^"]*"',
