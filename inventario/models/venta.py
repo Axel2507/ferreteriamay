@@ -17,7 +17,12 @@ class Venta(models.Model):
 
 class DetalleVenta(models.Model):
     venta = models.ForeignKey(Venta, on_delete=models.CASCADE)
-    material = models.ForeignKey(Material, to_field="codigo", on_delete=models.CASCADE)
+    material = models.ForeignKey(
+    Material,
+    to_field="codigo",
+    db_column="material_id",  # 👈 así se llama en tu tabla real
+    on_delete=models.CASCADE
+)
     cantidad = models.PositiveIntegerField()
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
 
