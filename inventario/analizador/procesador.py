@@ -454,7 +454,7 @@ class CommandProcessor:
                 "message": f"Detalle de venta agregado: {material.nombre} x{cantidad}",
                 "object": {
                     "venta_id": venta.id,
-                    "material_id": material.codigo,
+                    "codigo_material": material.codigo,
                     "nombre_material": material.nombre,
                     "cantidad": cantidad,
                     "subtotal": data.get("subtotal")
@@ -469,7 +469,7 @@ class CommandProcessor:
         except Material.DoesNotExist:
             return {
                 "success": False,
-                "error": f"El material con código {data.get('material_id')} no existe"
+                "error": f"El material con código '{data.get('codigo')}' no existe"
             }
         except Exception as e:
             return {
