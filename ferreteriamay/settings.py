@@ -27,7 +27,7 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ['ferremay.com', 'www.ferremay.com', '18.212.16.28']
+ALLOWED_HOSTS = ['ferremay.com', 'www.ferremay.com', '3.86.165.136']
 
 
 # Application definition

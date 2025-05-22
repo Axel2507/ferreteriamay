@@ -13,7 +13,7 @@
     <div class="container">
         <h2>Materiales Registrados</h2>
 
-        <form method="get" class="search-bar">
+        <form method="get" action="{% url 'buscar_materiales' %}" class="search-bar">
             <input type="text" name="q" id="searchInput" placeholder="Buscar por código o nombre..." value="{{ request.GET.q }}">
             <button type="submit">Buscar</button>
         </form>
