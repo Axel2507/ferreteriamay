@@ -2,10 +2,15 @@ import serial
 import asyncio
 import websockets
 import json
+import ssl
 
 SERIAL_PORT = 'COM4'  # ← Cambia según tu puerto
 BAUD_RATE = 9600
 WS_URI = "wss://ferremay.com/ws/barcode/"
+
+ssl_context = ssl.create_default_context()
+ssl_context.check_hostname = False
+ssl_context.verify_mode = ssl.CERT_NONE
 
 async def serial_to_ws():
     async with websockets.connect(WS_URI) as ws:
