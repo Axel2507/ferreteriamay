@@ -27,6 +27,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'listar_categorias' %}">Listar Categorías</a></li>
                             <li><a href="{% url 'agregar_categoria' %}">Agregar Categoría</a></li>
+                            <li><a href="{% url 'listar_categorias' %}">Actualizar Categoría</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -34,6 +35,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'listar_materiales'%}">Listar Materiales</a></li>
                             <li><a href="{% url 'agregar_material' %}">Agregar Material</a></li>
+                            <li><a href="{% url 'listar_materiales'%}">Actualizar Materiales</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -41,6 +43,7 @@
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'listar_proveedores' %}">Listar Proveedores</a></li>
                             <li><a href="{% url 'agregar_proveedor' %}">Agregar Proveedor</a></li>
+                            <li><a href="{% url 'listar_proveedores' %}">Actualizar Proveedores</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
@@ -48,12 +51,29 @@
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'listar_unidades' %}">Listar Unidades</a></li>
                             <li><a href="{% url 'agregar_unidad' %}">Agregar Unidad</a></li>
+                             <li><a href="{% url 'listar_unidades' %}">Actualizar Unidades</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">Descuento</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'listar_descuentos' %}">Listar Descuentos</a></li>
+                            <li><a href="{% url 'agregar_descuento' %}">Agregar Descuento</a></li>
+                             <li><a href="{% url 'listar_descuentos' %}">Actualizar Descuento</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle">Ventas</a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'agregar_venta' %}">Registrar Venta</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle">Devolucion</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'listar_devoluciones' %}">Listar Devoluciones</a></li>
+                            <li><a href="{% url 'agregar_devolucion' %}">Registrar Devolucion</a></li>
+
                         </ul>
                     </li>
                 </ul>
@@ -63,6 +83,7 @@
 
     <main class="container">
         {% block content %}
+        <div id="notificaciones" class="notificaciones-container"></div>
         {% endblock %}
     </main>
 

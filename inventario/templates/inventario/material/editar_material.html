@@ -54,6 +54,13 @@
                     </td>
                     <td>
                         <a href="{% url 'actualizar_material' material.codigo %}" class="btn-action btn-edit">Editar</a>
+
+                        {% if material.activo %}
+                        <form method="post" action="{% url 'desactivar_material' material.codigo %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-action btn-delete" onclick="return confirm('¿Estás seguro que deseas eliminar este material?');">Eliminar</button>
+                        </form>
+                        {% endif %}
                     </td>
                 </tr>
                 {% empty %}
@@ -64,8 +71,9 @@
             </tbody>
         </table>
     </div>
+
     <script>
-document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     const socket = new WebSocket("wss://ferremay.com/ws/barcodes/");
 
@@ -85,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.onerror = (error) => console.error('❌ LISTAR_MAT: Error WebSocket:', error);
     socket.onclose = () => console.warn('🔌 LISTAR_MAT: WebSocket cerrado');
 });
-</script>
+    </script>
 </body>
 </html>
 {% endblock %}

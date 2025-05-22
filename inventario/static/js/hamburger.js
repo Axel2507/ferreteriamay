@@ -41,6 +41,25 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     }
   })
+
+  function cargarNotificaciones() {
+    fetch('/api/notificaciones/')
+    .then(res => res.json())
+    .then(data => {
+        const contenedor = document.getElementById('notificaciones');
+        contenedor.innerHTML = '';
+        data.notificaciones.forEach(n => {
+            const div = document.createElement('div');
+            div.className = 'alerta-notificacion';
+            div.innerHTML = `
+                <span>${n.mensaje} (${n.fecha})</span>
+                <button onclick="this.parentElement.remove()">✖</button>
+            `;
+            contenedor.appendChild(div);
+        });
+    });
+}
+setInterval(cargarNotificaciones, 10000); // cada 10 seg
   
   
  

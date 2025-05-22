@@ -1,8 +1,9 @@
 from django.db import models
 
 class Notificacion(models.Model):
-    mensaje = models.CharField(max_length=255)
+    mensaje = models.TextField()
     fecha = models.DateTimeField()
+    codigo_material = models.CharField(max_length=50, null=True, blank=True)
 
-    def __str__(self):
-        return self.mensaje
+    class Meta:
+        ordering = ['-fecha']

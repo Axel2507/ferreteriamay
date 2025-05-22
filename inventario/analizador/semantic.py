@@ -2,6 +2,8 @@ from django.db import models
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from inventario.models import Material, Categoria, Proveedor, Unidad, Venta, Devolucion, Descuento
 from inventario.models.venta import DetalleVenta
+import re 
+
 class SemanticError(Exception):
     pass
 
@@ -171,7 +173,7 @@ class SemanticAnalyzer:
         return True
     
     def analyze_act_cat(self):
-        """Analiza semánticamente la actualización de una categoría"""
+        """Analiza semánticamente la actualización de una categoría y la aplica"""
         # Verificar que la categoría exista
         try:
             categoria = Categoria.objects.get(id=self.data.get("id"))
@@ -189,6 +191,11 @@ class SemanticAnalyzer:
         if nueva_abreviacion and nueva_abreviacion != categoria.abreviacion:
             if Categoria.objects.filter(abreviacion=nueva_abreviacion).exclude(id=categoria.id).exists():
                 raise SemanticError(f"Ya existe una categoría con la abreviación '{nueva_abreviacion}'")
+
+        # ✅ ACTUALIZAR LOS VALORES Y GUARDAR
+        categoria.nombre = nuevo_nombre
+        categoria.abreviacion = nueva_abreviacion
+        categoria.save()
 
         return True
      
@@ -246,5 +253,43 @@ class SemanticAnalyzer:
         except ObjectDoesNotExist:
             raise SemanticError(f"No existe un material con el código '{codigo}'")
         
+        # Todo está bien
+        return True
+    
+    def analyze_act_prov(self):
+        """Analiza semánticamente la actualización de un proveedor"""
+
+        # Verificar que el proveedor exista
+        try:
+            proveedor = Proveedor.objects.get(id_proveedor=self.data.get("id"))
+        except ObjectDoesNotExist:
+            raise SemanticError(f"No existe un proveedor con ID '{self.data.get('id')}'")
+
+        # Verificar que el nuevo nombre de empresa no esté duplicado (si se cambia)
+        nuevo_nombre = self.data.get("nombre_empresa")
+        if nuevo_nombre != proveedor.nombre_empresa and Proveedor.objects.filter(nombre_empresa=nuevo_nombre).exists():
+            raise SemanticError(f"Ya existe un proveedor con el nombre de empresa '{nuevo_nombre}'")
+
+        # Verificar formato básico del teléfono (opcional, puedes ajustar la validación)
+        telefono = self.data.get("telefono")
+        if telefono and not re.fullmatch(r"\(\d{3}\)\d{3}-\d{4}", telefono):
+           raise SemanticError("El número de teléfono debe tener el formato (###)###-####")
+
+        # Verificar que el correo no esté repetido (si se cambia)
+        nuevo_correo = self.data.get("correo")
+        if nuevo_correo != proveedor.correo and Proveedor.objects.filter(correo=nuevo_correo).exists():
+            raise SemanticError(f"Ya existe un proveedor con el correo '{nuevo_correo}'")
+
+        # Verificar formato básico del correo (muy básico)
+        if "@" not in nuevo_correo or "." not in nuevo_correo:
+            raise SemanticError("El correo electrónico no tiene un formato válido")
+
+        # Verificar que no se dejen campos esenciales vacíos
+        campos_obligatorios = ["nombre_empresa", "nombre_contacto", "telefono", "correo", "direccion"]
+        for campo in campos_obligatorios:
+            valor = self.data.get(campo)
+            if valor is None or str(valor).strip() == "":
+                raise SemanticError(f"El campo '{campo}' no puede estar vacío")
+
         # Todo está bien
         return True

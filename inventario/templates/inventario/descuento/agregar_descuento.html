@@ -1,0 +1,84 @@
+{% extends  'base.html' %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Material</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}"> <!-- Tu CSS externo -->
+</head>
+<body>
+<h2>Aplicación de Descuento - FerreMay</h2>
+
+<form method="get">
+  <label for="codigo">Buscar material por código:</label>
+  <input type="text" name="codigo" id="codigo" value="{{ request.GET.codigo }}">
+  <button type="submit">Buscar</button>
+</form>
+
+{% if materiales %}
+<table border="1">
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Producto</th>
+      <th>Precio</th>
+      <th>Nombre del Descuento</th>
+      <th>Descuento (%)</th>
+      <th>Precio Final</th>
+      <th>Estado</th>
+      <th>Acción</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for material in materiales %}
+    <tr>
+      <form method="post">
+        {% csrf_token %}
+        <td>{{ material.codigo }}</td>
+        <td>{{ material.nombre }}</td>
+        <td>${{ material.precio_venta }}</td>
+        <td>
+          <input type="text" name="nombre" value="{{ material.descuento.nombre|default:'' }}" placeholder="Ej: Promo Verano">
+        </td>
+        <td>
+          <input type="number" name="porcentaje" class="porcentaje" step="0.01"
+                 value="{{ material.descuento.porcentaje|default:0 }}" data-precio="{{ material.precio_venta}}">
+        </td>
+        <td class="precio-final">
+          ${{ material.precio|floatformat:2 }}
+        </td>
+        <td>
+          <select name="estado">
+            <option value="True" {% if material.descuento.estado %}selected{% endif %}>activo</option>
+            <option value="False" {% if not material.descuento.estado %}selected{% endif %}>desactivado</option>
+            <option value="none" {% if not material.descuento %}selected{% endif %}>sin descuento</option>
+          </select>
+        </td>
+        <td>
+          <input type="hidden" name="codigo" value="{{ material.codigo }}">
+          <button type="submit">Guardar</button>
+        </td>
+      </form>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No hay materiales con ese código.</p>
+{% endif %}
+
+<script>
+document.querySelectorAll(".porcentaje").forEach(input => {
+  input.addEventListener("input", function () {
+    const precio = parseFloat(this.dataset.precio);
+    const descuento = parseFloat(this.value) || 0;
+    const precioFinal = precio - (precio * descuento / 100);
+    const td = this.closest("tr").querySelector(".precio-final");
+    td.textContent = `$${precioFinal.toFixed(2)}`;
+  });
+});
+</script>
+{% endblock %}

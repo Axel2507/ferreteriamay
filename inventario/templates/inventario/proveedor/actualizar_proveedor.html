@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Actualizar Proveedor</title>
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+</head>
+<body>
+<div class="container">
+    <h2>Actualizar Proveedor</h2>
+    {% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form id="formProveedor" method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Nombre de la Empresa:</label>
+                    <input type="text" class="form-control" id="nombre_empresa" name="nombre_empresa" value="{{ proveedor.nombre_empresa }}" required>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Nombre del Contacto:</label>
+                    <input type="text" class="form-control" id="nombre_contacto" name="nombre_contacto" value="{{ proveedor.nombre_contacto }}" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Teléfono:</label>
+                    <input type="tel" class="form-control" id="telefono" name="telefono" value="{{ proveedor.telefono }}" required>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Correo Electrónico:</label>
+                    <input type="email" class="form-control" id="correo" name="correo" value="{{ proveedor.correo }}" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label class="form-label">Dirección:</label>
+                    <textarea class="form-control" id="direccion" name="direccion" rows="3" required>{{ proveedor.direccion }}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 30px; display: flex; gap: 10px;">
+            <div class="form-group">
+                <button type="submit" name="accion" value="actualizar" class="btn" id="actualizarProveedor">Actualizar Proveedor</button>
+            </div>
+            <div class="form-group">
+                <button type="submit" name="accion" value="eliminar" class="btn btn-danger" id="eliminarProveedor" onclick="return confirm('¿Estás seguro de eliminar este proveedor?');">Eliminar Proveedor</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+{% endblock %}

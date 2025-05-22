@@ -1,44 +1,69 @@
-{% extends  'base.html' %}
+{% extends 'base.html' %}
+
 {% block content %}
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Listado de Categorías</title>
-    <link rel="stylesheet" href="{% static 'css/estilos.css' %}?v={% now 'U' %}">
-</head>
-<body>
-    <div class="container">
-        <h2>Listado de Categorías</h2>
+<div class="container mt-4">
+    <h2>Listado de Categorías</h2>
 
-        {% if categorias %}
-            <table class="table">
-                <thead>
+    <!-- Formulario de búsqueda -->
+    <form method="GET" action="{% url 'listar_categorias' %}" class="form-inline mb-3">
+        <input type="text" name="q" placeholder="Buscar por nombre o abreviación..."
+               value="{{ query|default:'' }}" class="form-control mr-2" />
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    <!-- Mensajes de éxito o error opcionales -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <table class="table table-bordered table-striped mt-3">
+        <thead class="thead-dark">
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Abreviación</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if categorias %}
+                {% for categoria in categorias %}
                     <tr>
-                        <th>#</th>
-                        <th>Nombre</th>
-                        <th>Abreviación</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for categoria in categorias %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ categoria.nombre }}</td>
-                            <td>{{ categoria.abreviacion }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No hay categorías registradas todavía.</p>
-        {% endif %}
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ categoria.nombre }}</td>
+                        <td>{{ categoria.abreviacion }}</td>
+                        <td>
+                            <a href="{% url 'actualizar_categoria' categoria.id %}" class="btn btn-sm btn-warning">Editar</a>
 
-        <div class="btn-container">
-            <a href="{% url 'agregar_categoria' %}" class="btn btn-primary">Agregar Nueva Categoría</a>
-        </div>
-    </div>
-</body>
-</html>
+                            {% if categoria.activa %}
+                                <a href="{% url 'eliminar_categoria' categoria.id %}"
+                                   class="btn btn-sm btn-danger"
+                                   onclick="return confirmarEliminacion();">Eliminar</a>
+                            {% else %}
+                                <a href="{% url 'activar_categoria' categoria.id %}"
+                                   class="btn btn-sm btn-success">Activar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" class="text-center">
+                        No se encontraron categorías que coincidan con la búsqueda.
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+    <a href="{% url 'agregar_categoria' %}" class="btn btn-primary">Agregar Nueva Categoría</a>
+</div>
+
+<script>
+    function confirmarEliminacion() {
+        return confirm("¿Estás seguro de que quieres eliminar esta categoría?");
+    }
+</script>
 {% endblock %}

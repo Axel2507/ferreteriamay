@@ -9,3 +9,4 @@ from .productovendidosemanal import ProductoVendidoSemanal
 from .notificacion import Notificacion
 from .reporteventasemanal import ReporteVentaSemanal
 from .usuario import Usuario
+from .notificacion import Notificacion

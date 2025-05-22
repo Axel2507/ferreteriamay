@@ -4,6 +4,9 @@ from inventario.analizador.procesador import CommandProcessor
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.http import require_POST
+from django.db.models import Q
+from django.contrib import messages
 
 
 def agregar_categoria(request):
@@ -36,11 +39,21 @@ def agregar_categoria(request):
     })
 
 def listar_categorias(request):
-    categorias = Categoria.objects.all().order_by('nombre')  # Ordenadas por nombre
+    query = request.GET.get('q')  # Tomamos el parámetro de búsqueda
+
+    if query:
+        categorias = Categoria.objects.filter(
+            Q(nombre__icontains=query) | Q(abreviacion__icontains=query)
+        ).order_by('nombre')
+    else:
+        categorias = Categoria.objects.all().order_by('nombre')
 
     context = {
-        'categorias': categorias
+        'categorias': categorias,
+        'query': query,  # Pasamos query para mostrar en la caja de búsqueda
     }
+
+    return render(request, 'inventario/categoria/listar_categorias.html', context)
 
     return render(request, 'inventario/categoria/listar_categorias.html', context)
 
@@ -76,3 +89,10 @@ def actualizar_categoria(request, id):
     return render(request, 'inventario/categoria/actualizar_categoria.html', {
         'categoria': categoria
     })
+
+
+def eliminar_categoria(request, id):
+    categoria = get_object_or_404(Categoria, id=id)
+    categoria.delete()
+    messages.success(request, "Categoría eliminada correctamente.")
+    return redirect('listar_categorias')

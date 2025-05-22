@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Registrar Devolución</h2>
+
+<!-- Mostrar mensajes de error o éxito -->
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+<!-- Formulario de búsqueda de venta -->
+<form method="get" action="{% url 'buscar_venta' %}">
+    <label for="venta_id">Buscar por ID de Venta:</label>
+    <input type="text" name="venta_id" id="venta_id" value="{{ venta_id|default:'' }}">
+    <button type="submit">Buscar</button>
+</form>
+
+<form method="get" action="{% url 'buscar_venta' %}">
+    <label for="fecha_venta">Buscar por Fecha (YYYY-MM-DD):</label>
+    <input type="date" name="fecha_venta" id="fecha_venta" value="{{ fecha_venta|default:'' }}">
+    <button type="submit">Buscar</button>
+</form>
+
+<hr>
+
+<!-- Si se encontraron ventas por fecha -->
+{% if ventas %}
+    <h3>Ventas encontradas:</h3>
+    <ul>
+        {% for v in ventas %}
+            <li>
+                Venta ID: {{ v.id }} | Fecha: {{ v.fecha|date:"d/m/Y H:i" }} | Total: ${{ v.total }}
+                <a href="{% url 'seleccionar_venta' v.id %}">Seleccionar</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<!-- Mostrar detalles de una venta específica para seleccionar devoluciones -->
+{% if venta %}
+    <h3>Venta Seleccionada - ID: {{ venta.id }}</h3>
+    <p>Fecha: {{ venta.fecha|date:"d/m/Y H:i" }}</p>
+    <p>Total: ${{ venta.total }}</p>
+    
+    <form method="post" action="{% url 'procesar_devolucion' %}">
+        {% csrf_token %}
+        <input type="hidden" name="venta_id" value="{{ venta.id }}">
+        
+        <table border="1" style="border-collapse: collapse; width: 100%;">
+            <thead>
+                <tr>
+                    <th>Seleccionar</th>
+                    <th>Producto</th>
+                    <th>Cantidad Vendida</th>
+                    <th>Precio Unitario</th>
+                    <th>Cantidad a Devolver</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in detalles %}
+                    <tr>
+                        <td style="text-align: center;">
+                            <input type="checkbox" name="devolver_{{ d.id }}">
+                        </td>
+                        <td>{{ d.material.nombre }}</td>
+                        <td style="text-align: center;">{{ d.cantidad }}</td>
+                        <td style="text-align: right;">${{ d.precio_unitario }}</td>
+                        <td>
+                            <input type="number" name="cantidad_{{ d.id }}" min="0" max="{{ d.cantidad }}" value="0" style="width: 60px;">
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <label for="motivo">Motivo de la Devolución:</label><br>
+        <select name="motivo" id="motivo" required>
+            <option value="">-- Seleccione un motivo --</option>
+            <option value="Defectuoso">Defectuoso</option>
+            <option value="Error en pedido">Error en pedido</option>
+            <option value="Cambio de opinion">Cambio de opinión</option>
+            <option value="Otro">Otro</option>
+        </select><br><br>
+        
+        <button type="submit">Procesar Devolución</button>
+    </form>
+{% endif %}
+
+{% endblock %}

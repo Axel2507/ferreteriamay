@@ -6,6 +6,8 @@ from inventario.models.unidad import Unidad
 from inventario.analizador.procesador import CommandProcessor
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
+from django.contrib import messages
+
 
 def agregar_material(request):
     """Vista para agregar un material pasando por analizadores"""
@@ -64,19 +66,22 @@ def agregar_material(request):
     })
 
 def listar_materiales(request):
-    """Vista para listar todos los materiales disponibles"""
-    materiales = Material.objects.select_related("categoria", "proveedor","unidad_compra", "unidad_venta").order_by("nombre")
-    return render(request, 'inventario/material/listar_materiales.html', {"materiales": materiales})
+    """Vista para listar o buscar materiales activos"""
+    query = request.GET.get('q', '')
+    materiales = Material.objects.filter(activo=True).select_related(
+        "categoria", "proveedor", "unidad_compra", "unidad_venta"
+    ).order_by("nombre")
 
-def buscar_materiales(request):
-    query = request.GET.get('q')
     if query:
-        materiales = Material.objects.filter(
+        materiales = materiales.filter(
             Q(nombre__icontains=query) | Q(codigo__icontains=query)
         )
-    else:
-        materiales = Material.objects.all()
-    return render(request, 'listar_material.html', {'materiales': materiales})
+
+    return render(request, 'inventario/material/listar_materiales.html', {
+        "materiales": materiales
+    })
+
+
 
 
 def actualizar_material(request, codigo):
@@ -149,3 +154,14 @@ def eliminar_material(request, codigo):
     return render(request, 'inventario/material/actualizar_material.html', {
         'material': material,
     })
+
+def desactivar_material(request, codigo):
+    material = get_object_or_404(Material, codigo=codigo)
+
+    if request.method == 'POST':
+        material.activo = False
+        material.save()
+        messages.success(request, f"Material '{material.nombre}' desactivado correctamente.")
+        return redirect('listar_materiales')  # Cambia por el nombre correcto de tu vista/listado
+
+    return redirect('listar_materiales')
