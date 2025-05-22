@@ -148,11 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if (data.barcode) {
-            console.log("📥 Código recibido:", data.barcode);
-            if (codigoInput && codigoInput.value !== data.barcode) {
-                codigoInput.value = data.barcode;
-            }
+        console.log("📥 Código recibido:", data.barcode);
+        if (data.barcode && codigoInput) {
+            codigoInput.value = data.barcode;
         }
     };
 
