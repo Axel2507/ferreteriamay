@@ -19,8 +19,12 @@ async def serial_to_ws():
             if ser.in_waiting:
                 line = ser.readline().decode('utf-8').strip()
                 if line:
-                    await ws.send(json.dumps({"barcode": line}))
+                    if line.startswith("Código escaneado:"):
+                        barcode = line.replace("Código escaneado:", "").strip()
+                    else:
+                        barcode = line
+                    await ws.send(json.dumps({"barcode": barcode}))
             await asyncio.sleep(0.1)
-
+            
 if __name__ == "__main__":
     asyncio.run(serial_to_ws())
