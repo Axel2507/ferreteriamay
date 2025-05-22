@@ -1,7 +1,7 @@
 # inventario/routing.py
 from django.urls import re_path
-from inventario.consumers import BarcodeConsumer
+from . import consumers
 
 websocket_urlpatterns = [
-    re_path(r'^ws/barcodes/$', BarcodeConsumer.as_asgi()),
+    re_path(r'^ws/barcodes/$',consumers.BarcodeConsumer.as_asgi()),
 ]
